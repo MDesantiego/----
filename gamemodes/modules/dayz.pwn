@@ -70,14 +70,7 @@ const MAX_LOOT = 15000; // Всего лута на сервере;
 #define SEM(%0,%1) \
 	SendClientMessageEx(%0, 0xFF6347AA, "-> "%1)
 
-new const WeaponNames[][32] = {
-	{"Unarmed (Fist)"},{"Brass Knuckles"},{"Golf Club"},{"Night Stick"},{"Knife"},{"Baseball Bat"},{"Shovel"},{"Pool Cue"}, {"Katana"},
-	{"Chainsaw"},{"Purple Dildo"},{"Big White Vibrator"},{"Medium White Vibrator"},{"Small White Vibrator"},{"Flowers"},{"Cane"},
-	{"Grenade"},{"Teargas"},{"Molotov"},{" "},{" "},{" "},{"9mm"},{"Silenced 9mm"},{"Desert Eagle"},{"Shotgun"},{"Sawnoff Shotgun"},
-	{"Combat Shotgun"},{"Micro Uzi"},{"MP5"},{"AK47"},{"M4"},{"Tec9"},{"Country Rifle"},{"Sniper Rifle"},{"RPG"},
-	{"Heat-Seeking Rocket Launcher"},{"Flamethrower"},{"Minigun"},{"Satchel Charge"},{"Detonator"},{"Spray Can"},{"Fire Extinguisher"},
-	{"Camera"},{"Night Vision"},{"Infrared Vision"},{"Parachute"},{"Fake Pistol"},{" "},{"Vehicle"},{"Helicopter Blades"},
-	{"Explosion"},{" "},{"Drowned"},{"Splat"}};
+
 new const ZonaLoots[] = {
 	114,10,82,0,43,69,51,18,11,29,0,110,61,53,54,82,70,108,52,10,109,16,29,12,78,20,0,51,69,38,71,16,13,75,16,0,21,
 	74,24,109,13,20,75,29,0,74,65,24,21,13,19,0,65,18,71,54,43,38,0,70,51,70,38,0,81,22,78,51,0,107,13};
