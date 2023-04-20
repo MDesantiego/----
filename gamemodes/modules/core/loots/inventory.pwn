@@ -503,6 +503,9 @@ stock inventory_clear(playerid) // Очистка инвентаря
 */
 stock inventory_use(playerid)
 {
+	if ( users [ playerid ] [ u_injured ] != 0 )
+		return SEM ( playerid, "Вы находитесь в стадии, нельзя сейчас использовать данную функцию." );
+
 	new str[96], str_name[40], item = 0, slots = 0;
 	global_string[0] = EOS;
 	strcat(global_string, "Кол-во\tНазвание\n");
@@ -947,26 +950,7 @@ stock DroppedInventoryPlayer(idv, Float:gPosX, Float:gPosY, Float:gPosZ, kolvo =
 	OnPlayerDeath;
 
 */
-public OnPlayerDeath(playerid, killerid, reason)
-{
-	DropItems(playerid); // Чистим инвентарь при входе;
-	#if defined IN_OnPlayerDeath
-		return IN_OnPlayerDeath(playerid, killerid, reason);
-	#else
-		return 1;
-	#endif
-}
 
-#if defined _ALS_OnPlayerDeath
-    #undef OnPlayerDeath
-#else
-    #define _ALS_OnPlayerDeath
-#endif
-#define OnPlayerDeath IN_OnPlayerDeath
-
-#if defined IN_OnPlayerDeath
-    forward IN_OnPlayerDeath(playerid, killerid, reason);
-#endif
 /*
 
 	OnPlayerConnect;

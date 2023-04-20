@@ -63,6 +63,7 @@ new global_string[3048]; // Глобальная переменная;
 new format_string_[256]; // Глобальная мини переменная;
 new GPS_Zone[MAX_PLAYERS][2]; // 0 - Время показа названия локации, 1 - Номер локации;
 
+new Text3D: users_death [ MAX_PLAYERS ]; 
 
 new global_hour, global_minute, global_second; // Переменные для записи времени;
 new Text3D: users_nickname[MAX_PLAYERS]; // Ник игрока;
@@ -540,6 +541,14 @@ enum player_info
 
 	Float:u_stamina,
 	u_perk,
+
+	Float:u_X,
+	Float:u_Y,
+	Float:u_Z,
+
+	u_injured,//Стадия
+	u_injured_time,//Время стадии
+	u_injured_leg,//Время ограничения бега
 };
 new users[MAX_PLAYERS][player_info];
 

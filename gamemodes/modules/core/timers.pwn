@@ -355,11 +355,40 @@ new
 		}
 	}
 	if(PlayerIsOnline(playerid)) return true;
+	
+	if ( users [ playerid ] [ u_injured_leg ] ) users [ playerid ] [ u_injured_leg ] --;
+	if(temp[playerid][TimeUsePack]) temp[playerid][TimeUsePack]--;
+	
+	if ( users [ playerid ] [ u_injured_time ] != 0 && users [ playerid ] [ u_injured ] != 0 )
+	{
+		if ( ( users [ playerid ] [ u_injured_time ] -- ) == 90 || users [ playerid ] [ u_injured_time ] == 60 || users [ playerid ] [ u_injured_time ] == 30 )
+			SEM ( playerid, "Через %i секунд вы сможете %s.", users [ playerid ] [ u_injured_time ], (users [ playerid ] [ u_injured ] == 1)?("встать"):("вы сможете принять смерть") );
+
+		if ( users [ playerid ] [ u_injured_time ] == 0 )
+		{
+			if ( users [ playerid ] [ u_injured ] == 1 )
+			{
+				users [ playerid ] [ u_injured ] = 0;
+				SSM ( playerid, "Ваш персонаж встал, но он все ещё ранен, вы не можете быстро ходить ещё 55 секунд." );
+				users [ playerid ] [ u_injured_leg ] = 55;
+				ClearAnimLoop ( playerid );
+			}
+			else 
+				SEM ( playerid, "Теперь вы можете принять смерть /acceptdeath" );
+		}
+		//SEM ( playerid, "%i", users [ playerid ] [ u_injured_time ] );
+	}
+
+
 	update_users_panel(playerid);
 	new Float:speed = GetSpeed ( playerid );
 
 	if ( debug_player [ playerid ] [ stamina ] == true ) 
 		SEM ( playerid, "Текущаю стамина: %.2f", users [ playerid ] [ u_stamina ] );
+	
+	if ( speed >= 9.0 && users [ playerid ] [ u_injured_leg ] != 0 )
+		ApplyAnimation ( playerid, "PED", "FALL_collapse", 4.1, 0, 1, 1, 0, 0 );
+	
 
 	if ( GetPlayerAnimationIndex ( playerid ) == 1197 )
 	{
@@ -412,7 +441,6 @@ new
 			}
 		}
 	}
-	if(temp[playerid][TimeUsePack]) temp[playerid][TimeUsePack]--;
 	if(temp[playerid][time_infinity_health])
 	{
 		temp[playerid][time_infinity_health]--;
