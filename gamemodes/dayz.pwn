@@ -45,6 +45,7 @@
 const max_items = 126; // Общее кол-во предметов;
 const MAX_LOOT = 15000; // Всего лута на сервере;
 
+
 #define params_dialog		playerid, response, listitem, inputtext[]
 
 #pragma tabsize 0
@@ -53,6 +54,40 @@ const MAX_LOOT = 15000; // Всего лута на сервере;
 #pragma warning disable 208
 #pragma warning disable 232
 
+
+#define SEM(%0,%1) \
+	SendClientMessageEx(%0, 0xFF6347AA, "-> "%1)
+
+#define SSM(%0,%1) \
+	SendClientMessageEx(%0, 0xFFFF90FF, "-> "%1)
+
+#define SYNM(%0,%1) \
+	SendClientMessageEx(%0, 0xccccccFF, "Используйте: "%1)
+
+#define moretti(%0,%1) \
+	SSM ( %0, "{FFFFFF}"%1)
+
+#define NoCommand(%0) \
+	SEM ( %0, "{FFFFFF}Данная команда не существует. Используйте {cccccc}/cmd{ffffff}, чтобы узнать список команд сервера." )
+/*
+#if defined _ALS_TextDrawShowForPlayer
+        #undef TextDrawShowForPlayer
+#else
+        #define _ALS_TextDrawShowForPlayer
+#endif
+#define TextDrawShowForPlayer _TextDrawShowForPlayer
+
+#if defined _ALS_PlayerTextDrawShow
+        #undef PlayerTextDrawShow
+#else
+        #define _ALS_PlayerTextDrawShow
+#endif
+#define PlayerTextDrawShow _PlayerTextDrawShow
+
+
+stock _TextDrawShowForPlayer ( playerid, Text:textid ) return SEM ( playerid, "net" );
+stock _PlayerTextDrawShow ( playerid, PlayerText: textid ) return SEM ( playerid, "Da" );
+*/
 #include 									"modules/core/variables.pwn"
 #include 									"modules/core/mysql_connect.pwn"
 #include 									"modules/core/anticheat.pwn"
@@ -65,10 +100,9 @@ const MAX_LOOT = 15000; // Всего лута на сервере;
 #include 									"modules/core/system_base.pwn"
 #include 									"modules/core/fulldostup.pwn"
 #include 									"modules/core/system_admin.pwn"
+#include 									"modules/core/perk_player.pwn"
 //==============================================================================
 
-#define SEM(%0,%1) \
-	SendClientMessageEx(%0, 0xFF6347AA, "-> "%1)
 
 new const WeaponNames[][32] = {
 	{"Unarmed (Fist)"},{"Brass Knuckles"},{"Golf Club"},{"Night Stick"},{"Knife"},{"Baseball Bat"},{"Shovel"},{"Pool Cue"}, {"Katana"},
@@ -861,7 +895,7 @@ stock CreateGlobalTextDraws(){
 	TextDrawFont(Mapen_S, 4);
 	TextDrawColor(Mapen_S, 0xFFFFFFFF);
 	TextDrawTextSize(Mapen_S, 400.0, 400.0);
-	ZVision = TextDrawCreate(2.000000, -1.000000, ".");
+	/*ZVision = TextDrawCreate(2.000000, -1.000000, ".");
 	TextDrawBackgroundColor(ZVision, 255);
 	TextDrawFont(ZVision, 1);
 	TextDrawLetterSize(ZVision, 0.509998, 54.000000);
@@ -872,6 +906,7 @@ stock CreateGlobalTextDraws(){
 	TextDrawUseBox(ZVision, 1);
 	TextDrawBoxColor(ZVision, -13495236);
 	TextDrawTextSize(ZVision, 638.000000, 0.000000);
+	*/
 	return 1; 
 }
 stock progress_procent(Float: one, Float: two)
@@ -1007,6 +1042,10 @@ public OnPlayerDeath(playerid, killerid, reason)
 		if(!admin[playerid][admin_settings][2]) continue;
 		SendDeathMessageToPlayer(i, killerid, playerid, reason);
 	}
+	if ( users [ playerid ] [ u_injured ] != 0 )
+		InjuredPlayer ( playerid, 2 );
+	else
+		InjuredPlayer ( playerid, 1 );
 	// temp[playerid][use_dialog] 					= -1;
 	users[playerid][u_newgame]						= 1;
 	users[playerid][u_damage][0] 					= 0;
@@ -1080,12 +1119,22 @@ void Damage(playerid)
 	}
 	return 0; 
 }
+
 public OnPlayerUpdate(playerid) 
 {
 	if(PlayerIsOnline(playerid)) return true;
 	if(GetPVarInt(playerid, "AFK") > 0) return SetPVarInt(playerid, "AFK", 0); 
+
+	if ( users [ playerid ] [ u_injured ] != 0 )
+	{
+		if ( !IsPlayerInRangeOfPoint ( playerid, 2.0, users [ playerid ] [ u_X ], users [ playerid ] [ u_Y ], users [ playerid ] [ u_Z ] ) )
+			SetPlayerPos ( playerid, users [ playerid ] [ u_X ], users [ playerid ] [ u_Y ], users [ playerid ] [ u_Z ] );
+		
+		ApplyAnimation ( playerid,"CRACK","crckidle2", 4.0, 1, 1, 1, 1, 0, 1);
+	}
 	return 1; 
 }
+
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
 	if(PRESSED(KEY_SPRINT) || PRESSED(KEY_JUMP))
@@ -1459,6 +1508,119 @@ public OnPlayerTakeDamage(playerid, issuerid, Float:amount, weaponid, bodypart)
 	}
 	return true; 
 }*/
+public OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid, bodypart)
+{
+	new Float:health;
+	GetPlayerHealth ( damagedid, health );
+
+	if ( users [ damagedid ] [ u_injured ] == 0 )
+	{
+		if ( health - amount <= 5.0 )
+			InjuredPlayer ( damagedid, 1 );
+	}
+	else if ( users [ damagedid ] [ u_injured ] == 1 )
+	{
+		if ( health - amount <= 85.0 )
+			InjuredPlayer ( damagedid, 2 );
+	}
+	else 
+		SetPlayerHealth ( damagedid, 100.0 );
+	
+	return 1;
+}
+
+stock SavePlayerPos ( playerid )
+{
+	GetPlayerPos ( playerid, users [ playerid ] [ u_X ], users [ playerid ] [ u_Y ], users [ playerid ] [ u_Z ] );
+	return 1;
+}
+
+CMD:acceptdeath ( playerid )
+{
+	if ( !IsPlayerConnected ( playerid ) ) return 1;
+
+	if ( users [ playerid ] [ u_injured ] != 2 )
+		return SEM ( playerid, "Вы не находитесь в стадии смерти." );
+
+	if ( users [ playerid ] [ u_injured_time ] != 0 )
+		return SEM ( playerid, "Вам необходимо подождать ещё %i секунд.", users [ playerid ] [ u_injured_time ] );
+
+	if ( IsValidDynamic3DTextLabel ( users_death [ playerid ] ) )
+	{
+		DestroyDynamic3DTextLabel ( users_death [ playerid ] );
+		users_death [ playerid ] = Text3D:INVALID_3DTEXT_ID;
+	}
+
+	users [ playerid ] [ u_injured ] =
+	users [ playerid ] [ u_injured_leg ] =
+	users [ playerid ] [ u_injured_time ] = 0;
+
+	SpawnPlayer ( playerid );
+	SetPlayerHealth ( playerid, 100.0 );
+	ClearAnimLoop ( playerid );
+	DropItems ( playerid );
+	users[playerid][u_newgame]						= 1;
+	users[playerid][u_damage][0] 					= 0;
+	users[playerid][u_helmet] 						= 0;
+	users[playerid][u_armour] 						= 0;
+	temp[playerid][temp_spawn] 						= false;
+	if(IsPlayerAttachedObjectSlotUsed(playerid, 9)) RemovePlayerAttachedObject(playerid, 9);
+	if(IsPlayerAttachedObjectSlotUsed(playerid, 8)) RemovePlayerAttachedObject(playerid, 8);
+	TextDrawHideForPlayer(playerid, Text: drop_items_TD);
+	TextDrawSetString(LoadingPlayer_TD[2], "~r~You are dead");
+	TextDrawShowForPlayer(playerid, LoadingPlayer_TD[2]);
+	LoadingForUser(playerid, 1);
+	// VeshiOff(playerid);
+	for(new m; m<sizeof(MapLine); m++) TextDrawHideForPlayer(playerid, MapLine[m]);
+	for(new a; a<CountIcon; a++) TextDrawHideForPlayer(playerid, MapIcon[a]);
+	PlayersInfo(playerid, "Вы умерли");
+	TextDrawHideForPlayer(playerid, ZVision);
+	TextDrawHideForPlayer(playerid, Mapen_S);
+	DeletePVar(playerid, "USE_ANIMATION");
+	temp[playerid][temp_use_map] = false;
+	SetPlayerDrunkLevel(playerid, 0);
+	SSM ( playerid, "Вы приняли смерть своего персонажа." );
+	return 1;
+}
+
+stock InjuredPlayer ( playerid, stage )
+{
+	SetPlayerHealth ( playerid, 100.0 );
+	SavePlayerPos ( playerid );
+	users [ playerid ] [ u_injured ] = stage;
+
+	if ( IsValidDynamic3DTextLabel ( users_death [ playerid ] ) )
+		DestroyDynamic3DTextLabel ( users_death [ playerid ] );
+	
+	new Float:x,
+		Float:y,
+		Float:z;
+
+	GetPlayerPos ( playerid, x, y, z );
+    if ( stage == 1 )
+	{
+		SEM ( playerid, "Ваш персонаж ранен и находится в стадии ранения." );
+
+		users [ playerid ] [ u_injured_time ] = 90;
+
+		users_death [ playerid ] = 
+			CreateDynamic3DTextLabel ( "{610000}(( ДАННЫЙ ПЕРСОНАЖ РАНЕН ))", 0xAFEEEEFF, x, y, z, 8.0, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 0, GetPlayerVirtualWorld ( playerid ), GetPlayerInterior ( playerid ) );
+	}
+	else
+	{
+		SEM ( playerid, "Ваш персонаж мёртв и находится в стадии смерти, через 120 секунд вы сможете принять смерть." );
+
+		users [ playerid ] [ u_injured_time ] = 120;
+
+		users_death [ playerid ] = 
+			CreateDynamic3DTextLabel ( "{610000}(( ДАННЫЙ ПЕРСОНАЖ МЕРТВ ))", 0xAFEEEEFF, x, y, z, 8.0, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 0, GetPlayerVirtualWorld ( playerid ), GetPlayerInterior ( playerid ) );
+	}
+	ApplyAnimation(playerid,"CRACK","crckidle2", 4.0, 1, 1, 1, 1, 0, 1);
+
+	SetPlayerPos ( playerid, x, y, z );
+	return 1;
+}
+
 public OnPlayerText(playerid, text[]) 
 {
 	if(PlayerIsOnline(playerid)) return server_error(playerid, "Необходимо быть авторизованым!"), false;
@@ -2435,6 +2597,7 @@ public OnRconLoginAttempt(ip[], password[], success)
 
 CMD:test ( playerid )
 {
+	/*
 	for ( new i = 0; i < sizeof ( stats__global ); i ++ )
 	{
 		SendClientMessage ( playerid, -1, "" );
@@ -2478,23 +2641,8 @@ CMD:test ( playerid )
 	
 	
 	SelectTextDraw ( playerid, 0xFFFFFF00 );
-	
-	/*for ( new i = 0; i < sizeof ( users_panel_td ); i ++ )
-		TextDrawHideForPlayer ( playerid, users_panel_td [ i ] );
-	
-	TextDrawHideForPlayer(playerid, HideMap_TD[0]);
-	TextDrawHideForPlayer(playerid, HideMap_TD[1]);
-	
-	for ( new i = 0; i < 9; i ++ )
-		PlayerTextDrawHide ( playerid, users_panel_ptd [ playerid ] [ i ] );
 	*/
-	//users_panel_ptd
-	return 1;
-}
-
-CMD:test_hide ( playerid )
-{
-	
+	users [ playerid ] [ u_adrenaline_otx ] = OTXODOS_MEDIK_ADR;
 	return 1;
 }
 

@@ -449,6 +449,45 @@ CMD:sethp(playerid, params[])
 	AntiFloodCommands(playerid, "/sethp");
 	return 1; 
 }
+
+CMD:aheal(playerid, params[]) 
+{
+	AdminProtect ( 2 );
+	
+	new userid;
+
+	if ( sscanf ( params, "u", userid ) ) 
+		return SEM ( playerid, "Используйте: /aheal [ид]" );
+	
+	if ( PlayerIsOnline ( userid ) ) 
+		return SEM ( playerid, "Игрок не авторизовался или игрок отсутствует." );
+	
+	AdminChatF ( "[A] %s %s восстановил здоровье у %s[%i].", admin_rank_name(playerid), users[playerid][u_name], users[userid][u_name], userid);
+	
+	SSM ( userid, "Администратор %s вылечил вас.", users [ playerid ] [ u_name ] );
+
+	SetPlayerHealth ( userid, 100.0 );
+	
+	if ( IsValidDynamic3DTextLabel ( users_death [ userid ] ) )
+	{
+		DestroyDynamic3DTextLabel ( users_death [ userid ] );
+		users_death [ userid ] = Text3D:INVALID_3DTEXT_ID;
+	}
+	
+	ClearAnimLoop ( userid );
+
+	users [ userid ] [ u_injured ] =
+	users [ userid ] [ u_injured_leg ] =
+	users [ userid ] [ u_adrenaline_otx ] =
+	users [ userid ] [ u_injured_time ] = 0;
+	
+	static str_logs [ 96 ];
+	format ( str_logs, sizeof ( str_logs ), "Изменил восстановил игрока %s", users [ userid ] [ u_name ] );
+	logs_admin ( playerid, str_logs, "/aheal" );
+	AntiFloodCommands ( playerid, "/aheal" );
+	return 1; 
+}
+
 /*
 CMD:otvet(playerid, params[]) 
 {

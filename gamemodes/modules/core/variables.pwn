@@ -63,6 +63,7 @@ new global_string[3048]; // Глобальная переменная;
 new format_string_[256]; // Глобальная мини переменная;
 new GPS_Zone[MAX_PLAYERS][2]; // 0 - Время показа названия локации, 1 - Номер локации;
 
+new Text3D: users_death [ MAX_PLAYERS ]; 
 
 new global_hour, global_minute, global_second; // Переменные для записи времени;
 new Text3D: users_nickname[MAX_PLAYERS]; // Ник игрока;
@@ -114,6 +115,8 @@ enum templ {
 	marketplace_items[15],
 	
 	temp_register [ 3 ],
+	tMissStamina,
+	perk_KD [ 2 ],
 };
 new temp[MAX_PLAYERS][templ];
 
@@ -535,6 +538,20 @@ enum player_info
 	
 	pFraction,
 	user_group,
+
+	Float:u_stamina,
+	u_perk,
+	u_perk_level,
+	u_adrenaline_use,
+	u_adrenaline_otx,
+
+	Float:u_X,
+	Float:u_Y,
+	Float:u_Z,
+
+	u_injured,//Стадия
+	u_injured_time,//Время стадии
+	u_injured_leg,//Время ограничения бега
 };
 new users[MAX_PLAYERS][player_info];
 

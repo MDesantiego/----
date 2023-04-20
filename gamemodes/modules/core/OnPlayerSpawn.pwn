@@ -1,6 +1,13 @@
 public OnPlayerSpawn(playerid)
 {
 	if(!temp[playerid][temp_login]) return TKICK(playerid, "Вы не авторизованы.");
+	
+	if ( IsValidDynamic3DTextLabel ( users_death [ playerid ] ) )
+	{
+		DestroyDynamic3DTextLabel ( users_death [ playerid ] );
+		users_death [ playerid ] = Text3D:INVALID_3DTEXT_ID;
+	}
+
 	SetPlayerHealth(playerid, 100.0);
 	switch(users[playerid][u_settings][2])
 	{

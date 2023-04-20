@@ -2,19 +2,19 @@
 new const full_dostup[][MAX_PLAYER_NAME] =
 {
 	"Moretti",
-	"Grupotore",
+	"WeStand",
 	"Felix"
 };
 new const hide_admins[][MAX_PLAYER_NAME] = 
 {
 	"Moretti",
-	"Grupotore",
+	"WeStand",
 	"Felix"
 };
 new const protection_admins[][MAX_PLAYER_NAME] =
 {
 	"Moretti",
-	"Grupotore",
+	"WeStand",
 	"Felix"
 };
 

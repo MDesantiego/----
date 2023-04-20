@@ -7,7 +7,7 @@ public OnPlayerCommandReceived(playerid, cmd[], params[], flags)
 }
 public OnPlayerCommandPerformed(playerid, cmd[], params[], result, flags)
 {
-	if(result == -1) return server_error(playerid, "Данная команда не существует. Используйте {cccccc}/cmd{ffffff}, чтобы узнать список команд сервера.");	
+	if(result == -1) return SEM ( playerid, "{FFFFFF}Данная команда не существует. Используйте {cccccc}/cmd{ffffff}, чтобы узнать список команд сервера." );	
     return 1;
 }
 //Алиасы:
@@ -29,6 +29,7 @@ CMD:craft(playerid)
 	{cccccc}3. {fffff0}Циркулярный станок\n\
 	{cccccc}4. {fffff0}Верстак\n\
 	{cccccc}5. {fffff0}Электропечь\n\
+	{cccccc}6. {fffff0}Перки\n\
 	{87CEEB}Информация", !"Изготовить", !"Закрыть");
 	return true;
 }

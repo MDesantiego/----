@@ -77,6 +77,19 @@ stock ResetNew(playerid)
 	DeletePVar(playerid, "Animation");
 	DeletePVar(playerid, "LoadWeapon");
 	DeletePVar(playerid, "CheckRegistrationUser");*/
+	
+	temp [ playerid ] [ tMissStamina ] =
+	temp [ playerid ] [ perk_KD ] [ 0 ] =
+	temp [ playerid ] [ perk_KD ] [ 1 ] =
+	users [ playerid ] [ u_injured ] =
+	users [ playerid ] [ u_injured_time ] =
+	users [ playerid ] [ u_injured_leg ] =
+	users [ playerid ] [ u_perk_level ] =
+	users [ playerid ] [ u_adrenaline_otx ] =
+	users [ playerid ] [ u_perk ] = 0;
+
+	users [ playerid ] [ u_stamina ] = 100.0;
+
 
 	admin[playerid][admin_level] 							= 0;
 	admin[playerid][u_a_dostup] 						= 0;
@@ -180,6 +193,7 @@ stock SetPlayerNeed(playerid, type, value) // type = 0 - Вода, type = 1 - Еда;
 }
 stock LoadingForUser(playerid, value = 0)
 {
+	SEM ( playerid, "LoadingForUser value = %i", value );
 	switch(value)
 	{
 	case 0:
@@ -194,7 +208,7 @@ stock LoadingForUser(playerid, value = 0)
 				for(new i = 0; i != 6; i++) TextDrawHideForPlayer(playerid, Text: GPS_TD[i]);
 				PlayerTextDrawHide(playerid, PlayerText: GPS_PTD[playerid][0]);
 			}
-			for(new td = 0; td < 31; td++)
+			/*for(new td = 0; td < 31; td++)
 			{
 				switch(td)
 				{
@@ -206,10 +220,10 @@ stock LoadingForUser(playerid, value = 0)
 			{
 				if(ptd == 7) continue;
 				PlayerTextDrawShow(playerid, PlayerText: users_panel_ptd[playerid][ptd]);
-			}
-			new format_string[(7+1)+MAX_PLAYER_NAME+3];
-			format(format_string, sizeof(format_string), "%s_(%i)", users[playerid][u_name], playerid);
-			PlayerTextDrawSetString(playerid, users_panel_ptd[playerid][0], format_string);
+			}*/
+			//new format_string[(7+1)+MAX_PLAYER_NAME+3];
+			//format(format_string, sizeof(format_string), "%s_(%i)", users[playerid][u_name], playerid);
+			//PlayerTextDrawSetString(playerid, users_panel_ptd[playerid][0], format_string);
 			DeletePVar(playerid, "PROTECT_LOADING");
 		}
 	case 1:
@@ -1821,7 +1835,7 @@ stock update_users_panel(playerid)
 		PlayerTextDrawColor(playerid, users_panel_ptd[playerid][6], HUD_NORMAL);
 		PlayerTextDrawShow(playerid, PlayerText: users_panel_ptd[playerid][6]);
 	}
-	if(GetPlayerWeapon(playerid) != 0)
+	/*if(GetPlayerWeapon(playerid) != 0)
 	{
 		SetPVarInt(playerid, "GUN_ID", GetPlayerWeapon(playerid));
 		if(!GetPVarInt(playerid, "SHOW_GUN_INFO"))
@@ -1839,7 +1853,7 @@ stock update_users_panel(playerid)
 		DeletePVar(playerid, "SHOW_GUN_INFO");
 		for(new td = 24; td < 30; td++) TextDrawHideForPlayer(playerid, users_panel_td[td]);
 		PlayerTextDrawHide(playerid, PlayerText: users_panel_ptd[playerid][7]);
-	}
+	}*/
 	format(format_update_users_panel, sizeof(format_update_users_panel), "Reloot:_%02i:%02i", ReLootTime/60, ReLootTime-((ReLootTime/60)*60));
 	TextDrawSetString(users_panel_td[30], format_update_users_panel); 
 	if(observation[playerid][observation_id] != INVALID_PLAYER_ID)
