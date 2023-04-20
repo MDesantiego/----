@@ -1527,6 +1527,10 @@ CMD:acceptdeath ( playerid )
 	if ( users [ playerid ] [ u_injured_time ] != 0 )
 		return SEM ( playerid, "Вам необходимо подождать ещё %i секунд.", users [ playerid ] [ u_injured_time ] );
 
+	users [ playerid ] [ u_injured ] =
+	users [ playerid ] [ u_injured_leg ] =
+	users [ playerid ] [ u_injured_time ] = 0;
+
 	SpawnPlayer ( playerid );
 	SetPlayerHealth ( playerid, 100.0 );
 	ClearAnimLoop ( playerid );
