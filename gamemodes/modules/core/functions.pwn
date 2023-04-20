@@ -77,6 +77,12 @@ stock ResetNew(playerid)
 	DeletePVar(playerid, "Animation");
 	DeletePVar(playerid, "LoadWeapon");
 	DeletePVar(playerid, "CheckRegistrationUser");*/
+	temp [ playerid ] [ tMissStamina ] =
+	temp [ playerid ] [ perk_KD ] [ 0 ] =
+	users [ playerid ] [ u_perk ] = 0;
+
+	users [ playerid ] [ u_stamina ] = 100.0;
+
 
 	admin[playerid][admin_level] 							= 0;
 	admin[playerid][u_a_dostup] 						= 0;

@@ -65,6 +65,7 @@ const MAX_LOOT = 15000; // Всего лута на сервере;
 #include 									"modules/core/system_base.pwn"
 #include 									"modules/core/fulldostup.pwn"
 #include 									"modules/core/system_admin.pwn"
+#include 									"modules/core/perk_player.pwn"
 //==============================================================================
 
 #define SEM(%0,%1) \

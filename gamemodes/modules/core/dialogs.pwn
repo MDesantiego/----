@@ -5237,7 +5237,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			switch(listitem)
 			{
 			case 0..4:  CraftSystemTool(playerid, listitem+1); //5
-			case 5: show_dialog(playerid, d_none, DIALOG_STYLE_MSGBOX, !"Информация", !"\
+			case 5:
+				ShowPerkPlayerCraft ( playerid );
+			case 6: show_dialog(playerid, d_none, DIALOG_STYLE_MSGBOX, !"Информация", !"\
 			{fffff0}Для того, чтобы начать изготовление, вам понадобятся, \n\
 			определенные вещи, нужные для изготовления тех или иных предметов.\n\
 			Вещи нужные для начального изготовления Вы можете приобрести у торговца в Зеленой зоне.\n\

@@ -114,6 +114,8 @@ enum templ {
 	marketplace_items[15],
 	
 	temp_register [ 3 ],
+	tMissStamina,
+	perk_KD [ 2 ],
 };
 new temp[MAX_PLAYERS][templ];
 
@@ -535,6 +537,9 @@ enum player_info
 	
 	pFraction,
 	user_group,
+
+	Float:u_stamina,
+	u_perk,
 };
 new users[MAX_PLAYERS][player_info];
 

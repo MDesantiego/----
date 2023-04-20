@@ -150,6 +150,9 @@ new
 		if(PlayerIsOnline(i)) continue;
 		if(users[i][u_hunger]) users[i][u_hunger]--;
 		if(users[i][u_thirst]) users[i][u_thirst]--;
+
+		if ( temp [ i ] [ perk_KD ] [ 0 ] ) temp [ i ] [ perk_KD ] [ 0 ] --;
+
 		if(GetPVarInt(i, "ANTIVIRUS_USE")) SetPVarInt(i, "ANTIVIRUS_USE", GetPVarInt(i, "ANTIVIRUS_USE") - 1);
 		if(users[i][u_infected] && !GetPVarInt(i, "ANTIVIRUS_USE"))
 		{
@@ -353,6 +356,45 @@ new
 	}
 	if(PlayerIsOnline(playerid)) return true;
 	update_users_panel(playerid);
+	new Float:speed = GetSpeed ( playerid );
+
+	if ( debug_player [ playerid ] [ stamina ] == true ) 
+		SEM ( playerid, "Текущаю стамина: %.2f", users [ playerid ] [ u_stamina ] );
+
+	if ( GetPlayerAnimationIndex ( playerid ) == 1197 )
+	{
+		if ( users [ playerid ] [ u_stamina ] > 0 )
+			users [ playerid ] [ u_stamina ] = users [ playerid ] [ u_stamina ] - 8.0;
+		else
+		{
+			OnePlayAnim(playerid,"FAT","IDLE_tired",4.0,0,0,1,1,0);
+		}
+	}
+	else if ( speed > 15.0 )
+	{
+		if ( users [ playerid ] [ u_stamina ] > 0 )
+			users [ playerid ] [ u_stamina ] = users [ playerid ] [ u_stamina ] - 15.0;
+		else
+		{
+			OnePlayAnim(playerid,"FAT","IDLE_tired",1.0,0,0,0,0,0);
+		}
+
+		temp [ playerid ] [ tMissStamina ] = 4;
+	}
+	else if ( users [ playerid ] [ u_stamina ] < 100.0 && users [ playerid ] [ u_perk ] != 1)
+	{
+		if ( temp [ playerid ] [ tMissStamina ] )
+			temp [ playerid ] [ tMissStamina ] --;
+		else 
+			users [ playerid ] [ u_stamina ] += 10;
+	}
+	else if ( users [ playerid ] [ u_stamina ] < MAX_STAMINA_SHTURM && users [ playerid ] [ u_perk ] == 1)
+	{
+		if ( temp [ playerid ] [ tMissStamina ] )
+			temp [ playerid ] [ tMissStamina ] --;
+		else if ( ( users [ playerid ] [ u_stamina ] += STAMINA_SHTUMR_P ) > MAX_STAMINA_SHTURM )
+			users [ playerid ] [ u_stamina ] = MAX_STAMINA_SHTURM;
+	}
 	if(GetPVarInt(playerid, "PROGRESSBAR_TIME_S")) 
 	{
 		SetPVarInt(playerid, "PROGRESSBAR_TIME_E", GetPVarInt(playerid, "PROGRESSBAR_TIME_E") + 1);
