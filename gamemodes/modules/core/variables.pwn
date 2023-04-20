@@ -541,6 +541,9 @@ enum player_info
 
 	Float:u_stamina,
 	u_perk,
+	u_perk_level,
+	u_adrenaline_use,
+	u_adrenaline_otx,
 
 	Float:u_X,
 	Float:u_Y,

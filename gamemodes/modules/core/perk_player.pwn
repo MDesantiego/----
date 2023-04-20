@@ -3,11 +3,27 @@
 #define STAMINA_SHTUMR_P		20
 #define KD_SHTURM_GRANATA		2
 #define KD_SHTURM_BAZYKA		10
+
+//Медик
+#define KD_MEDIK_HEL			10
+#define KD_MEDIK_AL				10
+#define STAMINA_MEDIK_U			5
+#define STAMINA_MEDIK_ADD		120
+#define STAMINA_MEDIK_REG		70
+#define OTXODOS_MEDIK_ADR		5
+
+
+alias:adrenaline("/al");
 /*
 	Штурмовик:
 	Стамина - 200 (Стандарт 100), Увелеченное восстановление стамины - 20/s (стандарт 10/s) 
 	Создание гранаты (КД 2 минуты) - без компонентов
 	Создать базуку (КД 10 минут) - без компонентов
+
+	Медик:
+	/heal раз в 10 минут, со 2 уровня прокачки можно поднимать со смерти (Как 2 уровень получить хуй его знает), снимает отходос от адреналина
+	/adrenaline(/al) раз в 10 минут, действует 5 минут, добавляет 120 к стамине (стакается с другими перками), реген стамины 70/s, отходос 5 минут (Анимка creep)
+
 */
 
 /*
@@ -574,11 +590,90 @@ stock ShowPerkPlayerCraft ( playerid )
 	return 1;
 }
 
+CMD:heal ( playerid, params [] )
+{
+	if ( users [ playerid ] [ u_perk ] != 2 )
+		return NoCommand ( playerid );
+
+	if ( temp [ playerid ] [ perk_KD ] [ 0 ] != 0 )
+		return SEM ( playerid, "Вы не можете лечить людей, подождите ещё %i минут.", temp [ playerid ] [ perk_KD ] [ 0 ] );
+
+	new userid;
+
+	if ( sscanf ( params, "i", userid ) )
+		return SYNM ( playerid, "/heal [ид игрока]" );
+
+	if ( PlayerIsOnline ( userid ) ) 
+		return SEM ( playerid, "Игрок не авторизовался или игрок отсутствует." );
+	
+	if ( !IsPlayerInRangeOfPlayer ( 1.0, playerid, userid ) )
+		return SEM ( playerid, "Вы слишком далеко от игрока!" );
+
+	if ( users [ userid ] [ u_injured ] == 2 && users [ playerid ] [ u_perk_level ] < 2)
+		return  SEM ( playerid, "Данный персонаж мертв, чтобы его поднять нужно прокачать уровень навыка!" );
+
+	SetPlayerHealth ( userid, 100.0 );
+	
+	if ( IsValidDynamic3DTextLabel ( users_death [ userid ] ) )
+	{
+		DestroyDynamic3DTextLabel ( users_death [ userid ] );
+		users_death [ userid ] = Text3D:INVALID_3DTEXT_ID;
+	}
+	
+	ClearAnimLoop ( userid );
+
+	users [ userid ] [ u_injured ] =
+	users [ userid ] [ u_injured_leg ] =
+	users [ userid ] [ u_adrenaline_otx ] =
+	users [ userid ] [ u_injured_time ] = 0;
+
+	SSM ( playerid, "Вы успешно помогли %s, кд команды - %i минут.", users [ userid ] [ u_name ], KD_MEDIK_HEL );
+	if ( userid != playerid ) SSM ( userid, "%s вылечил вашего персонажа", users [ playerid ] [ u_name ] );
+
+	temp [ playerid ] [ perk_KD ] [ 0 ] = KD_MEDIK_HEL;
+	return 1;
+}
+
+CMD:adrenaline ( playerid, params[] )
+{
+	if ( users [ playerid ] [ u_perk ] != 2 )
+		return NoCommand ( playerid );
+
+	if ( temp [ playerid ] [ perk_KD ] [ 1 ] != 0 )
+		return SEM ( playerid, "Вы не применять адреналин ещё %i минут.", temp [ playerid ] [ perk_KD ] [ 1 ] );
+
+	new userid;
+	if ( sscanf ( params, "i", userid ) ) 
+		return SYNM ( playerid, "/adrenaline [ид]" );
+	
+	if ( PlayerIsOnline ( userid ) ) 
+		return SEM ( playerid, "Игрок не авторизовался или игрок отсутствует." );
+	
+	if ( !IsPlayerInRangeOfPlayer ( 0.6, playerid, userid ) )
+		return SEM ( playerid, "Вы слишком далеко от игрока!" );
+
+	if ( users [ userid ] [ u_injured ] != 0 )
+		return SEM ( playerid, "Данный персонаж ранен или мертв!" );
+
+	users [ userid ] [ u_adrenaline_use ] = STAMINA_MEDIK_U;
+
+	SSM ( playerid, "Вы успешно вкололи адреналин %s", users [ userid ] [ u_name ] );
+	if ( playerid != userid )
+		SSM ( playerid, "%s вколол вам шприц адреналина", users [ playerid ] [ u_name ] );
+		
+	moretti ( userid, "Ваша стамина увеличена на %i", STAMINA_MEDIK_ADD );
+	moretti ( userid, "Ваше восстановление выносливости увеличено до %i", STAMINA_MEDIK_REG );
+	moretti ( userid, "Эффект будет действовать ещё %i минут", STAMINA_MEDIK_U );
+
+	temp [ playerid ] [ perk_KD ] [ 1 ] = KD_MEDIK_AL;
+	return 1;
+}
+
 CMD:testperk ( playerid, params[] )
 {
 	Dialog_Show ( playerid, dialog_perk_select, DIALOG_STYLE_LIST, "????? ?????", "\
 		1. Штурмовик\n\
-		2. ?????\n\
+		2. Медик\n\
 		3. ???????? ????\n\
 		4. ???????\n\
 		5. ?????\n\

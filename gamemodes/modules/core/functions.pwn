@@ -84,6 +84,8 @@ stock ResetNew(playerid)
 	users [ playerid ] [ u_injured ] =
 	users [ playerid ] [ u_injured_time ] =
 	users [ playerid ] [ u_injured_leg ] =
+	users [ playerid ] [ u_perk_level ] =
+	users [ playerid ] [ u_adrenaline_otx ] =
 	users [ playerid ] [ u_perk ] = 0;
 
 	users [ playerid ] [ u_stamina ] = 100.0;

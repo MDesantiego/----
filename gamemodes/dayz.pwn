@@ -60,6 +60,15 @@ const MAX_LOOT = 15000; // Всего лута на сервере;
 
 #define SSM(%0,%1) \
 	SendClientMessageEx(%0, 0xFFFF90FF, "-> "%1)
+
+#define SYNM(%0,%1) \
+	SendClientMessageEx(%0, 0xccccccFF, "Используйте: "%1)
+
+#define moretti(%0,%1) \
+	SSM ( %0, "{FFFFFF}"%1)
+
+#define NoCommand(%0) \
+	SEM ( %0, "{FFFFFF}Данная команда не существует. Используйте {cccccc}/cmd{ffffff}, чтобы узнать список команд сервера." )
 /*
 #if defined _ALS_TextDrawShowForPlayer
         #undef TextDrawShowForPlayer
@@ -1502,12 +1511,21 @@ public OnPlayerTakeDamage(playerid, issuerid, Float:amount, weaponid, bodypart)
 public OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid, bodypart)
 {
 	new Float:health;
-
 	GetPlayerHealth ( damagedid, health );
 
-	if ( health - amount <= 5.0 )
-		InjuredPlayer ( playerid, 1 );
-
+	if ( users [ damagedid ] [ u_injured ] == 0 )
+	{
+		if ( health - amount <= 5.0 )
+			InjuredPlayer ( damagedid, 1 );
+	}
+	else if ( users [ damagedid ] [ u_injured ] == 1 )
+	{
+		if ( health - amount <= 85.0 )
+			InjuredPlayer ( damagedid, 2 );
+	}
+	else 
+		SetPlayerHealth ( damagedid, 100.0 );
+	
 	return 1;
 }
 
@@ -1526,6 +1544,12 @@ CMD:acceptdeath ( playerid )
 
 	if ( users [ playerid ] [ u_injured_time ] != 0 )
 		return SEM ( playerid, "Вам необходимо подождать ещё %i секунд.", users [ playerid ] [ u_injured_time ] );
+
+	if ( IsValidDynamic3DTextLabel ( users_death [ playerid ] ) )
+	{
+		DestroyDynamic3DTextLabel ( users_death [ playerid ] );
+		users_death [ playerid ] = Text3D:INVALID_3DTEXT_ID;
+	}
 
 	users [ playerid ] [ u_injured ] =
 	users [ playerid ] [ u_injured_leg ] =
@@ -1567,7 +1591,12 @@ stock InjuredPlayer ( playerid, stage )
 
 	if ( IsValidDynamic3DTextLabel ( users_death [ playerid ] ) )
 		DestroyDynamic3DTextLabel ( users_death [ playerid ] );
-   
+	
+	new Float:x,
+		Float:y,
+		Float:z;
+
+	GetPlayerPos ( playerid, x, y, z );
     if ( stage == 1 )
 	{
 		SEM ( playerid, "Ваш персонаж ранен и находится в стадии ранения." );
@@ -1575,7 +1604,7 @@ stock InjuredPlayer ( playerid, stage )
 		users [ playerid ] [ u_injured_time ] = 90;
 
 		users_death [ playerid ] = 
-			CreateDynamic3DTextLabel ( "{FFFF00}РАНЕН", 0xAFEEEEFF, 0.0, 0.0, 0.0, 10.0, playerid, INVALID_VEHICLE_ID, 0, GetPlayerVirtualWorld ( playerid ), GetPlayerInterior ( playerid ) );
+			CreateDynamic3DTextLabel ( "{610000}(( ДАННЫЙ ПЕРСОНАЖ РАНЕН ))", 0xAFEEEEFF, x, y, z, 8.0, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 0, GetPlayerVirtualWorld ( playerid ), GetPlayerInterior ( playerid ) );
 	}
 	else
 	{
@@ -1584,9 +1613,11 @@ stock InjuredPlayer ( playerid, stage )
 		users [ playerid ] [ u_injured_time ] = 120;
 
 		users_death [ playerid ] = 
-			CreateDynamic3DTextLabel ( "{FFFF00}МЕРТВ", 0xAFEEEEFF, 0.0, 0.0, 0.0, 10.0, playerid, INVALID_VEHICLE_ID, 0, GetPlayerVirtualWorld ( playerid ), GetPlayerInterior ( playerid ) );
+			CreateDynamic3DTextLabel ( "{610000}(( ДАННЫЙ ПЕРСОНАЖ МЕРТВ ))", 0xAFEEEEFF, x, y, z, 8.0, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 0, GetPlayerVirtualWorld ( playerid ), GetPlayerInterior ( playerid ) );
 	}
 	ApplyAnimation(playerid,"CRACK","crckidle2", 4.0, 1, 1, 1, 1, 0, 1);
+
+	SetPlayerPos ( playerid, x, y, z );
 	return 1;
 }
 
@@ -2611,15 +2642,7 @@ CMD:test ( playerid )
 	
 	SelectTextDraw ( playerid, 0xFFFFFF00 );
 	*/
-	InjuredPlayer ( playerid, 1 );
-	users [ playerid ] [ u_injured_time ] = 10;
-	return 1;
-}
-
-CMD:test_hide ( playerid )
-{
-	InjuredPlayer ( playerid, 2 );
-	users [ playerid ] [ u_injured_time ] = 10;
+	users [ playerid ] [ u_adrenaline_otx ] = OTXODOS_MEDIK_ADR;
 	return 1;
 }
 

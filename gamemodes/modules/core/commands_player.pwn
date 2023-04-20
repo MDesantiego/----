@@ -7,7 +7,7 @@ public OnPlayerCommandReceived(playerid, cmd[], params[], flags)
 }
 public OnPlayerCommandPerformed(playerid, cmd[], params[], result, flags)
 {
-	if(result == -1) return server_error(playerid, "Данная команда не существует. Используйте {cccccc}/cmd{ffffff}, чтобы узнать список команд сервера.");	
+	if(result == -1) return SEM ( playerid, "{FFFFFF}Данная команда не существует. Используйте {cccccc}/cmd{ffffff}, чтобы узнать список команд сервера." );	
     return 1;
 }
 //Алиасы:

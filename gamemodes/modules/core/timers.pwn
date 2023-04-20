@@ -152,6 +152,17 @@ new
 		if(users[i][u_thirst]) users[i][u_thirst]--;
 
 		if ( temp [ i ] [ perk_KD ] [ 0 ] ) temp [ i ] [ perk_KD ] [ 0 ] --;
+		if ( temp [ i ] [ perk_KD ] [ 1 ] ) temp [ i ] [ perk_KD ] [ 1 ] --;
+		if ( users [ i ] [ u_adrenaline_otx ] ) if ( ( users [ i ] [ u_adrenaline_otx ] -- ) == 0 ) ClearAnimLoop ( i );
+		if ( users [ i ] [ u_adrenaline_use ] )
+		{
+			if ( ( users [ i ] [ u_adrenaline_use ] -- ) == 1 ) SSM ( i, "Адреналин на вас будет действовать ещё 60 секунд." );
+			if ( users [ i ] [ u_adrenaline_use ] == 0 )
+			{
+				SSM ( i, "Ваш персонаж начал отходить от адреналина (%i минут)", OTXODOS_MEDIK_ADR );
+				users [ i ] [ u_adrenaline_otx ] = OTXODOS_MEDIK_ADR;
+			}
+		}
 
 		if(GetPVarInt(i, "ANTIVIRUS_USE")) SetPVarInt(i, "ANTIVIRUS_USE", GetPVarInt(i, "ANTIVIRUS_USE") - 1);
 		if(users[i][u_infected] && !GetPVarInt(i, "ANTIVIRUS_USE"))
@@ -372,6 +383,11 @@ new
 				SSM ( playerid, "Ваш персонаж встал, но он все ещё ранен, вы не можете быстро ходить ещё 55 секунд." );
 				users [ playerid ] [ u_injured_leg ] = 55;
 				ClearAnimLoop ( playerid );
+				if ( IsValidDynamic3DTextLabel ( users_death [ playerid ] ) )
+				{
+					DestroyDynamic3DTextLabel ( users_death [ playerid ] );
+					users_death [ playerid ] = Text3D:INVALID_3DTEXT_ID;
+				}
 			}
 			else 
 				SEM ( playerid, "Теперь вы можете принять смерть /acceptdeath" );
@@ -389,6 +405,8 @@ new
 	if ( speed >= 9.0 && users [ playerid ] [ u_injured_leg ] != 0 )
 		ApplyAnimation ( playerid, "PED", "FALL_collapse", 4.1, 0, 1, 1, 0, 0 );
 	
+	if ( speed >= 6.0 && users [ playerid ] [ u_adrenaline_otx ] != 0 )
+		ApplyAnimation ( playerid, "PED", "Player_Sneak", 4.1, 1, 1, 1, 1, 1 );
 
 	if ( GetPlayerAnimationIndex ( playerid ) == 1197 )
 	{
@@ -410,20 +428,39 @@ new
 
 		temp [ playerid ] [ tMissStamina ] = 4;
 	}
-	else if ( users [ playerid ] [ u_stamina ] < 100.0 && users [ playerid ] [ u_perk ] != 1)
+	else if ( temp [ playerid ] [ tMissStamina ] )
+		temp [ playerid ] [ tMissStamina ] --;
+	else if ( users [ playerid ] [ u_adrenaline_use ] == 0 )
+	{
+		if ( users [ playerid ] [ u_stamina ] < 100.0 && users [ playerid ] [ u_perk ] != 1 )
+			users [ playerid ] [ u_stamina ] += 10;
+		else if ( users [ playerid ] [ u_stamina ] < MAX_STAMINA_SHTURM && users [ playerid ] [ u_perk ] == 1 )
+			if ( ( users [ playerid ] [ u_stamina ] += STAMINA_SHTUMR_P ) > MAX_STAMINA_SHTURM ) users [ playerid ] [ u_stamina ] = MAX_STAMINA_SHTURM;
+	}
+	else
+	{
+		if ( users [ playerid ] [ u_stamina ] < (100.0+STAMINA_MEDIK_ADD) && users [ playerid ] [ u_perk ] != 1 )
+			users [ playerid ] [ u_stamina ] += STAMINA_MEDIK_REG;
+		else if ( users [ playerid ] [ u_stamina ] < (MAX_STAMINA_SHTURM+STAMINA_MEDIK_ADD) && users [ playerid ] [ u_perk ] == 1 )
+			if ( ( users [ playerid ] [ u_stamina ] += STAMINA_MEDIK_REG ) > MAX_STAMINA_SHTURM ) users [ playerid ] [ u_stamina ] = MAX_STAMINA_SHTURM+STAMINA_MEDIK_ADD;
+	}
+	/*else if ( users [ playerid ] [ u_stamina ] < 100.0 && users [ playerid ] [ u_perk ] != 1 && users [ playerid ] [ u_adrenaline_use ] == 0 )
 	{
 		if ( temp [ playerid ] [ tMissStamina ] )
 			temp [ playerid ] [ tMissStamina ] --;
 		else 
 			users [ playerid ] [ u_stamina ] += 10;
 	}
-	else if ( users [ playerid ] [ u_stamina ] < MAX_STAMINA_SHTURM && users [ playerid ] [ u_perk ] == 1)
+	else if ( users [ playerid ] [ u_stamina ] < MAX_STAMINA_SHTURM && users [ playerid ] [ u_perk ] == 1 )
 	{
 		if ( temp [ playerid ] [ tMissStamina ] )
 			temp [ playerid ] [ tMissStamina ] --;
 		else if ( ( users [ playerid ] [ u_stamina ] += STAMINA_SHTUMR_P ) > MAX_STAMINA_SHTURM )
 			users [ playerid ] [ u_stamina ] = MAX_STAMINA_SHTURM;
 	}
+	*/
+	/* STAMINA_MEDIK_ADD */
+
 	if(GetPVarInt(playerid, "PROGRESSBAR_TIME_S")) 
 	{
 		SetPVarInt(playerid, "PROGRESSBAR_TIME_E", GetPVarInt(playerid, "PROGRESSBAR_TIME_E") + 1);
