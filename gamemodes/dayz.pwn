@@ -36,8 +36,10 @@
 #include									<colandreas>
 #include 									<GZ_ShapesALS>
 // #include 									<mxdate>D
+#include 									"mselect.inc"
 #include 									<GoogleAuth>
 #include									<easyDialog>
+//#include									<Pawn.RakNet>
 // #include 									<checker>
 // #include									<test>
 // #include									<progress>
@@ -100,7 +102,9 @@ stock _PlayerTextDrawShow ( playerid, PlayerText: textid ) return SEM ( playerid
 #include 									"modules/core/system_base.pwn"
 #include 									"modules/core/fulldostup.pwn"
 #include 									"modules/core/system_admin.pwn"
+
 #include 									"modules/core/perk_player.pwn"
+#include 									"modules/core/m_skinmenu.pwn"
 //==============================================================================
 
 

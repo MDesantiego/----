@@ -45,6 +45,7 @@ new 										MySQL:database;
 #define TABLE_HISTORY_NAME	 				"`users_history_name`"
 #define TABLE_CONCLUSION					"`users_conclusion`"
 
+#define TABLE_SKIN  						"`skin_menu`"
 /*
 
 	OnGameModeInit;
@@ -100,6 +101,7 @@ public OnGameModeInit()
 	m_tquery("SELECT * FROM "TABLE_CRAFT_TOOLS"", "@LoadingCraftTools");
 	m_tquery("SELECT * FROM "TABLE_ANTICHEAT" ORDER BY `ac_code`", "@LoadAntiCheat");
 	m_tquery("SELECT * FROM "TABLE_BOX"", "@LoadBox");
+	m_tquery ( "SELECT * FROM "TABLE_SKIN"", "LoadDynamicSkin" );
 	
 	ShowNameTags(1);
 	EnableStuntBonusForAll(0);

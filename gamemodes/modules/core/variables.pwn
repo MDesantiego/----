@@ -43,7 +43,7 @@ new const bool: test_server = false;
 #define m_query(							mysql_query(database,
 #define void%0(%1)							forward %0(%1); public %0(%1)
 #define PlayerIsOnline(%0)					!temp[%0][temp_login] || !temp[%0][temp_spawn] || IsPlayerNPC(%0)
-#define AdminProtect(%1)   					if(admin[playerid][admin_level] < %1 || admin[playerid][u_a_dostup] != 1) return server_error(playerid, "Доступ ограничен.")
+#define AdminProtect(%1)   					if(admin[playerid][admin_level] < %1 || admin[playerid][u_a_dostup] != 1) return NoCommand(playerid)
 #define AdminChatF(%1,%2)					format(format_string_, sizeof(format_string_), %1,%2) && AdminChat(format_string_, 1)
 #define SCMF(%0,%1,%2,%3) 					format(format_string_, sizeof(format_string_), %2, %3) && SendClientMessage(%0, %1, format_string_)
 #define SCMAF(%0,%1,%2) 					format(format_string_, sizeof(format_string_), %1, %2) && SendClientMessageToAll(%0, format_string_)
@@ -117,6 +117,9 @@ enum templ {
 	temp_register [ 3 ],
 	tMissStamina,
 	perk_KD [ 2 ],
+
+	tSelect,
+	tSelect_1,
 };
 new temp[MAX_PLAYERS][templ];
 
