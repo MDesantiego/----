@@ -120,6 +120,9 @@ enum templ {
 
 	tSelect,
 	tSelect_1,
+
+	bool:t_inv_new_slot,
+	t_inv_old_slot_id,
 };
 new temp[MAX_PLAYERS][templ];
 

@@ -253,8 +253,59 @@ Dialog:player_skip_promo ( params_dialog )
 
 public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 {
-	// if ( temp [ playerid ] [ use_dialog ] != -1 ) return 1 ;
-	
+	for ( new i = 30 ; i < 60 ; i ++ )
+	{
+		if ( playertextid != inventory__TD [ playerid ] [ i ] )
+			continue;
+
+		new k = i-30;
+
+		if ( temp [ playerid ] [ t_inv_new_slot ] == true )
+		{
+			if ( user_items [ playerid ] [ k ] [ item_id ] != 0 )
+				return SEM ( playerid, "[SLOT USED] new slot != 0" );
+
+			new old_slot = temp [ playerid ] [ t_inv_old_slot_id ];
+
+			user_items [ playerid ] [ k ] [ item_id ] = user_items [ playerid ] [ old_slot ] [ item_id ];
+			user_items [ playerid ] [ k ] [ item_value ] = user_items [ playerid ] [ old_slot ] [ item_value ];
+			user_items [ playerid ] [ k ] [ item_quantity ] = user_items [ playerid ] [ old_slot ] [ item_quantity ];
+			user_items [ playerid ] [ k ] [ item_use_id ] = user_items [ playerid ] [ old_slot ] [ item_use_id ];
+			user_items [ playerid ] [ k ] [ item_use_value ] = user_items [ playerid ] [ old_slot ] [ item_use_value ];
+			user_items [ playerid ] [ k ] [ item_use_quantity ] = user_items [ playerid ] [ old_slot ] [ item_use_quantity ];
+
+			user_items [ playerid ] [ old_slot ] [ item_id ] =
+			user_items [ playerid ] [ old_slot ] [ item_value ] =
+			user_items [ playerid ] [ old_slot ] [ item_quantity ] =
+			user_items [ playerid ] [ old_slot ] [ item_use_id ] =
+			user_items [ playerid ] [ old_slot ] [ item_use_value ] =
+			user_items [ playerid ] [ old_slot ] [ item_use_quantity ] = 0;
+
+			temp [ playerid ] [ t_inv_new_slot ] = false;
+			SEM ( playerid, "[SLOT USED] new slot equip!" );
+			return 1;
+		}
+
+		if ( user_items [ playerid ] [ k ] [ item_id ] != 0 )
+		{
+			SEM ( playerid, "[SLOT USERD] select new slot" );
+			temp [ playerid ] [ t_inv_new_slot ] = true;
+			temp [ playerid ] [ t_inv_old_slot_id ] = k;		
+			return 1;
+		}
+		
+
+		return 1;
+		/*{
+
+
+
+
+			return 1;
+		}*/
+
+	}
+
 	if ( playertextid == regiser__menu [ playerid ] [ 3 ] )
 	{
 		if ( temp [ playerid ] [ temp_register ] [ 0 ] != 1 || temp [ playerid ] [ temp_register ] [ 1 ] != 1 )

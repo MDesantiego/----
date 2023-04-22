@@ -90,6 +90,7 @@ stock ResetNew(playerid)
 
 	users [ playerid ] [ u_stamina ] = 100.0;
 
+	temp [ playerid ] [ t_inv_new_slot ] = false;
 
 	admin[playerid][admin_level] 							= 0;
 	admin[playerid][u_a_dostup] 						= 0;

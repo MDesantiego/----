@@ -144,6 +144,8 @@ new
 #include 									"modules/core/loots/box.pwn"
 #include 									"modules/core/Registration-Login.pwn"
 #include 									"modules/core/system_report.pwn"
+
+#include 									"modules/core/m_inventory.pwn"
 //=============================[ Stock's ]======================================
 stock TranslateText(string[])
 {
