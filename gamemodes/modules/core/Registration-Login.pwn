@@ -426,12 +426,8 @@ stock LoadPlayer(playerid)
 		format(mysql_format_string, sizeof(mysql_format_string), "[A]{AFEEEE}[CONNECT] {FFFFE0}%s(%i) авторизовался. IP: %s, R-IP: %s.", users[playerid][u_name], playerid, GetIp(playerid), users[playerid][u_ip_registration]);
 		SendClientMessage(i, 0xA52A2AFF, mysql_format_string);
 	}
-	server_accept(playerid, "Помощь по игре {A52A2A}/help");
-	server_accept(playerid, "Правила проекта {A52A2A}/rules{FFFFFF}");
-	server_accept(playerid, "Все команды сервера {A52A2A}/cmd{FFFFFF}");
-	server_accept(playerid, "Дополнительные услуги {A52A2A}/donate{FFFFFF}");
-	server_accept(playerid, "Наш сайт {A52A2A}"SITE_NAME"{FFFFFF}");
-	server_accept(playerid, "Наша группа ВК {A52A2A}"VKON_NAME"{FFFFFF}");
+	SSU ( playerid, "Помощь по игре {A52A2A}/help" );
+	SSU ( playerid, "Приятного времяпрепровождения на нашем сервере!" );
 	m_format(mysql_format_string, sizeof(mysql_format_string), "UPDATE "TABLE_USERS" SET `u_ip` = '%s', `u_date` = 'NOW()' WHERE `u_name` = '%s'", GetIp(playerid), users[playerid][u_name]);
 	m_query(mysql_format_string);
 	AddUserLogin(playerid, 1);

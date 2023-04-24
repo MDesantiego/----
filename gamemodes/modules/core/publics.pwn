@@ -1,5 +1,9 @@
 public OnPlayerClickTextDraw(playerid, Text:clickedid)
 {
+	if(clickedid == Text:INVALID_TEXT_DRAW)
+    {
+		if ( temp [ playerid ] [ inventory_open ] == true ) HidePlayerInventory ( playerid );
+	}
 	// if ( temp [ playerid ] [ use_dialog ] != -1 ) return 1 ;
     if(!(_:clickedid ^ 0xFFFF))
     {
@@ -253,19 +257,33 @@ Dialog:player_skip_promo ( params_dialog )
 
 public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 {
-	for ( new i = 30 ; i < 60 ; i ++ )
+	if ( playertextid == inventory__TD [ playerid ] [ 168 ] )
 	{
-		if ( playertextid != inventory__TD [ playerid ] [ i ] )
-			continue;
+		PlayerTextDrawColor ( playerid, inventory__TD [ playerid ] [ 168 ], 5824 );
+		UpdateTD ( playerid, inventory__TD [ playerid ] [ 168 ] );
 
-		new k = i-30;
+		if ( temp [ playerid ] [ t_inv_new_slot ] == true ) HideExtraDostupItem ( playerid, temp [ playerid ] [ t_inv_old_slot_id ] ); 
+						
+		temp [ playerid ] [ t_inv_new_slot ] = true;
+		temp [ playerid ] [ t_inv_old_slot_id ] = 228;
+	}
 
-		if ( temp [ playerid ] [ t_inv_new_slot ] == true )
+	if ( temp [ playerid ] [ t_inv_new_slot ] == true )
+	{
+		for ( new i = 152; i < 156; i ++ )
 		{
+			if ( playertextid != inventory__TD [ playerid ] [ i ] )
+				continue;
+			
+			new k = i-114;
+
 			if ( user_items [ playerid ] [ k ] [ item_id ] != 0 )
-				return SEM ( playerid, "[SLOT USED] new slot != 0" );
+				return 1;
 
 			new old_slot = temp [ playerid ] [ t_inv_old_slot_id ];
+
+			if ( IsWeapon ( user_items [ playerid ] [ old_slot ] [ item_id ] ) == 1 || temp [ playerid ] [ t_inv_old_slot_id ] == 228 )
+				return SEM ( playerid, "В подсумок нельзя помещать оружие!" );
 
 			user_items [ playerid ] [ k ] [ item_id ] = user_items [ playerid ] [ old_slot ] [ item_id ];
 			user_items [ playerid ] [ k ] [ item_value ] = user_items [ playerid ] [ old_slot ] [ item_value ];
@@ -274,36 +292,201 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			user_items [ playerid ] [ k ] [ item_use_value ] = user_items [ playerid ] [ old_slot ] [ item_use_value ];
 			user_items [ playerid ] [ k ] [ item_use_quantity ] = user_items [ playerid ] [ old_slot ] [ item_use_quantity ];
 
-			user_items [ playerid ] [ old_slot ] [ item_id ] =
-			user_items [ playerid ] [ old_slot ] [ item_value ] =
-			user_items [ playerid ] [ old_slot ] [ item_quantity ] =
-			user_items [ playerid ] [ old_slot ] [ item_use_id ] =
-			user_items [ playerid ] [ old_slot ] [ item_use_value ] =
-			user_items [ playerid ] [ old_slot ] [ item_use_quantity ] = 0;
+			ResetPlayerSlotInventory ( playerid, old_slot );
 
 			temp [ playerid ] [ t_inv_new_slot ] = false;
-			SEM ( playerid, "[SLOT USED] new slot equip!" );
+
+			HideExtraDostupItem ( playerid, old_slot );
+			InventoryUpdateSwipe ( playerid, old_slot, k );
 			return 1;
 		}
+
+		for ( new i = 136; i < 152; i ++ )
+		{
+			if ( playertextid != inventory__TD [ playerid ] [ i ] )
+				continue;
+		
+			new k = temp [ playerid ] [ t_inv_old_slot_id ]; 
+
+			HideExtraDostupItem ( playerid, k );
+
+			if ( i%2== 0 )
+				Dialog_Show ( playerid, inventory_menu, DIALOG_STYLE_LIST, loots [ user_items [ playerid ] [ k ] [ item_id ] ] [ loot_name ], !"- Использовать\n- Информация", !"Далее", !"Назад" );
+			else
+			{
+				if ( IsPlayerInAnyVehicle ( playerid  ) ) 
+					return SEM ( playerid, "Вы Не должны находиться в транспортном средстве!" );
+				
+				if ( IsPlayerInWater ( playerid ) ) 
+					return SEM ( playerid, "Вы Не должны находиться в воде!" );
+				
+				if ( user_items [ playerid ] [ k ] [ item_id ] == 0 ) 
+					return 1;
+				
+				ClearAnimLoop ( playerid );
+
+				SSM ( playerid, "Выброшено из инвентаря: %s.", loots [ user_items [ playerid ] [ k ] [ item_id ] ] [ loot_name ] );
+				
+				static Float: pos_xyz[3];
+				GetPlayerPos ( playerid, pos_xyz [ 0 ], pos_xyz [ 1 ], pos_xyz [ 2 ] );
+				DroppedInventoryPlayer ( user_items [ playerid ] [ k ] [ item_id ], pos_xyz [ 0 ], pos_xyz [ 1 ], pos_xyz [ 2 ], user_items [ playerid ] [ k ] [ item_value ], user_items [ playerid ] [ k ] [ item_quantity ] );
+				
+				ResetPlayerSlotInventory ( playerid, k );
+			
+				PlayerTextDrawHide ( playerid, inventory__TD [ playerid ] [ k + 98 ] );
+				temp [ playerid ] [ t_inv_new_slot ] = false;
+			}
+
+			return 1;
+		}
+
+		for ( new i = 120; i < 128; i ++ )
+		{
+			if ( playertextid != inventory__TD [ playerid ] [ i ] )
+				continue;
+
+			new k = i-90;
+
+			if ( user_items [ playerid ] [ k ] [ item_id ] != 0 )
+				return 1;
+
+			new old_slot = temp [ playerid ] [ t_inv_old_slot_id ];
+
+			if ( IsWeapon ( user_items [ playerid ] [ old_slot ] [ item_id ] ) == 1 || temp [ playerid ] [ t_inv_old_slot_id ] == 228 )
+				return SEM ( playerid, "В разгрузку нельзя помещать оружие!" );
+
+			user_items [ playerid ] [ k ] [ item_id ] = user_items [ playerid ] [ old_slot ] [ item_id ];
+			user_items [ playerid ] [ k ] [ item_value ] = user_items [ playerid ] [ old_slot ] [ item_value ];
+			user_items [ playerid ] [ k ] [ item_quantity ] = user_items [ playerid ] [ old_slot ] [ item_quantity ];
+			user_items [ playerid ] [ k ] [ item_use_id ] = user_items [ playerid ] [ old_slot ] [ item_use_id ];
+			user_items [ playerid ] [ k ] [ item_use_value ] = user_items [ playerid ] [ old_slot ] [ item_use_value ];
+			user_items [ playerid ] [ k ] [ item_use_quantity ] = user_items [ playerid ] [ old_slot ] [ item_use_quantity ];
+
+			ResetPlayerSlotInventory ( playerid, old_slot );
+
+			temp [ playerid ] [ t_inv_new_slot ] = false;
+
+			HideExtraDostupItem ( playerid, old_slot );
+			InventoryUpdateSwipe ( playerid, old_slot, k );
+
+			return 1;
+		}	
+	}
+
+	for ( new i = 60; i < 120; i ++ )
+	{
+		if ( playertextid != inventory__TD [ playerid ] [ i ] )
+			continue;
+
+		new k = temp [ playerid ] [ t_inv_old_slot_id ]; 
+
+		HideExtraDostupItem ( playerid, k );
+
+		if ( i%2== 0 )
+			Dialog_Show ( playerid, inventory_menu, DIALOG_STYLE_LIST, loots [ user_items [ playerid ] [ k ] [ item_id ] ] [ loot_name ], !"- Использовать\n- Информация", !"Далее", !"Назад" );
+		else
+		{
+			if ( IsPlayerInAnyVehicle ( playerid  ) ) 
+				return SEM ( playerid, "Вы Не должны находиться в транспортном средстве!" );
+			
+			if ( IsPlayerInWater ( playerid ) ) 
+				return SEM ( playerid, "Вы Не должны находиться в воде!" );
+			
+			if ( user_items [ playerid ] [ k ] [ item_id ] == 0 ) 
+				return 1;
+			
+			ClearAnimLoop ( playerid );
+
+			SSM ( playerid, "Выброшено из инвентаря: %s.", loots [ user_items [ playerid ] [ k ] [ item_id ] ] [ loot_name ] );
+			
+			static Float: pos_xyz[3];
+			GetPlayerPos ( playerid, pos_xyz [ 0 ], pos_xyz [ 1 ], pos_xyz [ 2 ] );
+			DroppedInventoryPlayer ( user_items [ playerid ] [ k ] [ item_id ], pos_xyz [ 0 ], pos_xyz [ 1 ], pos_xyz [ 2 ], user_items [ playerid ] [ k ] [ item_value ], user_items [ playerid ] [ k ] [ item_quantity ] );
+			
+			ResetPlayerSlotInventory ( playerid, k );
+		
+			PlayerTextDrawHide ( playerid, inventory__TD [ playerid ] [ k + 30 ] );
+			temp [ playerid ] [ t_inv_new_slot ] = false;
+		}
+
+		return 1;
+	}
+
+	for ( new i = 0 ; i < 30 ; i ++ )
+	{
+		if ( playertextid != inventory__TD [ playerid ] [ i ] || temp [ playerid ] [ t_inv_new_slot ] != true )
+			continue;
+
+		new k = i;
+
+		if ( user_items [ playerid ] [ k ] [ item_id ] != 0 )
+			return 1;
+
+		new old_slot = temp [ playerid ] [ t_inv_old_slot_id ];
+
+		if ( old_slot == 228 )
+		{
+			new weapon,
+				ammo;
+			for(new slot = 0; slot < 13; slot++)
+			{
+				GetPlayerWeaponData ( playerid, slot, weapon, ammo );
+				
+				if ( GetWeaponMainSlot ( weapon ) != 1 )
+					continue;
+				
+				GiveWeapon2Slot ( playerid, slot, k );
+				InventoryUpdateSwipe ( playerid, old_slot, k );
+				return 1;
+			}
+			return 1;
+		}
+
+		user_items [ playerid ] [ k ] [ item_id ] = user_items [ playerid ] [ old_slot ] [ item_id ];
+		user_items [ playerid ] [ k ] [ item_value ] = user_items [ playerid ] [ old_slot ] [ item_value ];
+		user_items [ playerid ] [ k ] [ item_quantity ] = user_items [ playerid ] [ old_slot ] [ item_quantity ];
+		user_items [ playerid ] [ k ] [ item_use_id ] = user_items [ playerid ] [ old_slot ] [ item_use_id ];
+		user_items [ playerid ] [ k ] [ item_use_value ] = user_items [ playerid ] [ old_slot ] [ item_use_value ];
+		user_items [ playerid ] [ k ] [ item_use_quantity ] = user_items [ playerid ] [ old_slot ] [ item_use_quantity ];
+
+		ResetPlayerSlotInventory ( playerid, old_slot );
+
+		temp [ playerid ] [ t_inv_new_slot ] = false;
+
+		HideExtraDostupItem ( playerid, old_slot );
+		InventoryUpdateSwipe ( playerid, old_slot, k );
+
+		return 1;
+	}
+
+	for ( new i = 30 ; i < 72 ; i ++ )
+	{
+		if ( i >= 60 && i <= 67 )
+		{
+			if ( playertextid != inventory__TD [ playerid ] [ i + 68 ] )
+				continue;
+		}
+		else if ( i >= 68 )
+		{
+			if ( playertextid != inventory__TD [ playerid ] [ i + 88 ] )
+				continue;
+		}
+		else if ( playertextid != inventory__TD [ playerid ] [ i ] )
+			continue;
+		
+		new k = i-30;
 
 		if ( user_items [ playerid ] [ k ] [ item_id ] != 0 )
 		{
-			SEM ( playerid, "[SLOT USERD] select new slot" );
+			if ( temp [ playerid ] [ t_inv_new_slot ] == true ) HideExtraDostupItem ( playerid, temp [ playerid ] [ t_inv_old_slot_id ] ); 
+			
+			ShowExtraDostupItem ( playerid, k );
+			
 			temp [ playerid ] [ t_inv_new_slot ] = true;
-			temp [ playerid ] [ t_inv_old_slot_id ] = k;		
+			temp [ playerid ] [ t_inv_old_slot_id ] = k;	
 			return 1;
 		}
-		
-
 		return 1;
-		/*{
-
-
-
-
-			return 1;
-		}*/
-
 	}
 
 	if ( playertextid == regiser__menu [ playerid ] [ 3 ] )

@@ -24,10 +24,11 @@ new Text: PlayersInfo_TD,
 	Text: craft_stol_TD[12],
 	Text: craft_pech_TD[14],
 	Text: drop_items_TD,
-	Text: users_panel_td[31],
 	Text: progressbar_TD[2],
-	Text:stats__global [ 24 ];
+	Text:stats__global [ 24 ],
+	Text: inventory_TD;
 
+#define MAX_INV_TD		171
 new 
 	PlayerText: PanelReconAdmin_PTD[MAX_PLAYERS][2],
 	// PlayerText: InfoPanel_PTD[MAX_PLAYERS][9],
@@ -36,11 +37,10 @@ new
 	PlayerText: craft_pila_PTD[MAX_PLAYERS][3],
 	PlayerText: craft_stol_PTD[MAX_PLAYERS][3],
 	PlayerText: craft_pech_PTD[MAX_PLAYERS][3],
-	PlayerText: users_panel_ptd[MAX_PLAYERS][9],
 	PlayerText: progressbar_PTD[MAX_PLAYERS][1],
 	PlayerText:stats__player [ MAX_PLAYERS ] [ 22 ],
 	PlayerText:regiser__menu[MAX_PLAYERS][13],
-	PlayerText:inventory__TD [ MAX_PLAYERS ] [ 60 ];
+	PlayerText:inventory__TD [ MAX_PLAYERS ] [ MAX_INV_TD ];
 
 stock DestroyTextDraws()
 {
@@ -55,7 +55,6 @@ stock DestroyTextDraws()
    	for(new td = 0; td < 2; td++) TextDrawDestroy(Text: progressbar_TD[td]);
    	TextDrawDestroy(Text: PlayersInfo_TD);
    	TextDrawDestroy(Text: drop_items_TD);
-   	for(new td = 0; td < 31; td++) TextDrawDestroy(Text: users_panel_td[td]);
 	return true;
 }
 stock DestroyPlayerTextDraws(playerid)
@@ -72,9 +71,9 @@ stock DestroyPlayerTextDraws(playerid)
    	for(new td = 0; td < 2; td++) TextDrawHideForPlayer(playerid, Text: progressbar_TD[td]);
    	TextDrawHideForPlayer(playerid, Text: PlayersInfo_TD);
    	TextDrawHideForPlayer(playerid, Text: drop_items_TD);
-   	for(new td = 0; td < 31; td++) TextDrawHideForPlayer(playerid, Text: users_panel_td[td]);
 	
-	for(new td = 0; td < 60; td++)  PlayerTextDrawDestroy(playerid, PlayerText: inventory__TD[playerid][td]);
+	if ( temp [ playerid ] [ inventory_open ] == true ) DestroyAllInventory ( playerid );
+	//for(new td = 0; td < MAX_INV_TD; td++)  PlayerTextDrawDestroy(playerid, PlayerText: inventory__TD[playerid][td]);
 	// Индивидуальные ТекстДравы:
 	for(new ptd = 0; ptd < 2; ptd++) PlayerTextDrawDestroy(playerid, PlayerText: PanelReconAdmin_PTD[playerid][ptd]);
 	// for(new td = 0; td < 9; td++) PlayerTextDrawDestroy(playerid, PlayerText: InfoPanel_PTD[playerid][td]);
@@ -84,11 +83,24 @@ stock DestroyPlayerTextDraws(playerid)
 	for(new ptd = 0; ptd < 3; ptd++) PlayerTextDrawDestroy(playerid, PlayerText: craft_pech_PTD[playerid][ptd]);
 	PlayerTextDrawDestroy(playerid, PlayerText: progressbar_PTD[playerid][0]);
 	PlayerTextDrawDestroy(playerid, PlayerText: GPS_PTD[playerid][0]);
-	for(new ptd = 0; ptd < 9; ptd++) PlayerTextDrawDestroy(playerid, PlayerText: users_panel_ptd[playerid][ptd]);
 	return true;
 }
 stock CreateTextDraws()
 {
+	inventory_TD = TextDrawCreate(-1.000000, -4.000000, "mdl-8002:bg");
+	TextDrawFont(inventory_TD, 4);
+	TextDrawLetterSize(inventory_TD, 0.600000, 2.000000);
+	TextDrawTextSize(inventory_TD, 645.000000, 457.000000);
+	TextDrawSetOutline(inventory_TD, 1);
+	TextDrawSetShadow(inventory_TD, 0);
+	TextDrawAlignment(inventory_TD, 1);
+	TextDrawColor(inventory_TD, -1);
+	TextDrawBackgroundColor(inventory_TD, 255);
+	TextDrawBoxColor(inventory_TD, 50);
+	TextDrawUseBox(inventory_TD, 1);
+	TextDrawSetProportional(inventory_TD, 1);
+	TextDrawSetSelectable(inventory_TD, 0);
+
 	//start_stat
 	stats__global[0] = TextDrawCreate(0.000000, 0.000000, "mdl-8000:bg_uk");
 	TextDrawFont(stats__global[0], 4);
@@ -1261,153 +1273,6 @@ stock CreateTextDraws()
 	TextDrawSetShadow(drop_items_TD, 0);
 	TextDrawSetSelectable(drop_items_TD, true);
 
-	
-	/*users_panel_td[0] = TextDrawCreate(499.4328, 6.0370, "LD_SPAC:white"); // пусто
-	TextDrawTextSize(users_panel_td[0], 103.0000, 103.5299);
-	TextDrawColor(users_panel_td[0], 255);
-
-	users_panel_td[1] = TextDrawCreate(491.1329, 2.9481, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[1], 18.0000, 19.0000);
-	TextDrawColor(users_panel_td[1], 255);
-
-	users_panel_td[2] = TextDrawCreate(593.9143, 2.9481, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[2], 18.0000, 19.0000);
-	TextDrawColor(users_panel_td[2], 255);
-
-	users_panel_td[3] = TextDrawCreate(494.1325, 12.4370, "LD_SPAC:white"); // пусто
-	TextDrawTextSize(users_panel_td[3], 114.8397, 92.3898);
-	TextDrawColor(users_panel_td[3], 255);
-
-	users_panel_td[4] = TextDrawCreate(492.4331, 4.4481, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[4], 18.0000, 19.0000);
-	TextDrawColor(users_panel_td[4], -2139062017);
-
-	users_panel_td[5] = TextDrawCreate(592.5147, 4.3481, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[5], 18.0000, 18.7098);
-	TextDrawColor(users_panel_td[5], -2139062017);
-
-	users_panel_td[6] = TextDrawCreate(502.6329, 7.7368, "LD_SPAC:white"); // пусто
-	TextDrawTextSize(users_panel_td[6], 98.2696, 83.9300);
-	TextDrawColor(users_panel_td[6], -2139062017);
-
-	users_panel_td[7] = TextDrawCreate(495.5327, 13.0368, "LD_SPAC:white"); // пусто
-	TextDrawTextSize(users_panel_td[7], 112.0400, 79.0000);
-	TextDrawColor(users_panel_td[7], -2139062017);
-
-	users_panel_td[8] = TextDrawCreate(496.4999, 20.0000, "Health:~n~Armour:~n~Kills:~n~Humanity:~n~Temperature:~n~Time:~n~Money:~n~Alive_time:~n~"); // Health:~n~Armour:~n~Kills:~n~Humanity:~n~Temperature:~n~Time:~n~Money:~n~Alive_time:~n~
-	TextDrawLetterSize(users_panel_td[8], 0.1973, 0.8406);
-	TextDrawAlignment(users_panel_td[8], 1);
-	TextDrawColor(users_panel_td[8], -1);
-	TextDrawBackgroundColor(users_panel_td[8], 255);
-	TextDrawFont(users_panel_td[8], 1);
-	TextDrawSetProportional(users_panel_td[8], 1);
-	TextDrawSetShadow(users_panel_td[8], 0);
-
-	users_panel_td[9] = TextDrawCreate(494.7998, 18.8999, "LD_SPAC:white"); // пусто
-	TextDrawTextSize(users_panel_td[9], 113.8795, 1.5398);
-	TextDrawColor(users_panel_td[9], 255);
-
-	users_panel_td[10] = TextDrawCreate(494.7998, 88.8991, "LD_SPAC:white"); // пусто
-	TextDrawTextSize(users_panel_td[10], 113.8795, 1.5398);
-	TextDrawColor(users_panel_td[10], 255);
-
-	users_panel_td[11] = TextDrawCreate(491.2330, 93.9470, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[11], 18.0000, 19.0000);
-	TextDrawColor(users_panel_td[11], 255);
-
-	users_panel_td[12] = TextDrawCreate(593.9143, 93.8470, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[12], 18.0000, 19.0000);
-	TextDrawColor(users_panel_td[12], 255);
-
-	users_panel_td[13] = TextDrawCreate(492.5331, 92.0473, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[13], 18.0000, 19.0000);
-	TextDrawColor(users_panel_td[13], -2139062017);
-
-	users_panel_td[14] = TextDrawCreate(592.6146, 92.0473, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[14], 18.0000, 18.7098);
-	TextDrawColor(users_panel_td[14], -2139062017);
-
-	users_panel_td[15] = TextDrawCreate(495.5327, 91.8359, "LD_SPAC:white"); // пусто
-	TextDrawTextSize(users_panel_td[15], 111.8097, 10.0000);
-	TextDrawColor(users_panel_td[15], -2139062017);
-
-	users_panel_td[16] = TextDrawCreate(502.6329, 92.1361, "LD_SPAC:white"); // пусто
-	TextDrawTextSize(users_panel_td[16], 98.6603, 15.6198);
-	TextDrawColor(users_panel_td[16], -2139062017);
-
-	users_panel_td[17] = TextDrawCreate(493.1997, 87.5998, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[17], 20.0000, 23.0000);
-	TextDrawColor(users_panel_td[17], 100);
-
-	users_panel_td[18] = TextDrawCreate(509.2008, 87.5998, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[18], 20.0000, 23.0000);
-	TextDrawColor(users_panel_td[18], 100);
-
-	users_panel_td[19] = TextDrawCreate(525.1978, 87.5998, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[19], 20.0000, 23.0000);
-	TextDrawColor(users_panel_td[19], 100);
-
-	users_panel_td[20] = TextDrawCreate(541.0938, 87.5998, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[20], 20.0000, 23.0000);
-	TextDrawColor(users_panel_td[20], 100);
-
-	users_panel_td[21] = TextDrawCreate(557.4899, 87.5998, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[21], 20.0000, 23.0000);
-	TextDrawColor(users_panel_td[21], 100);
-
-	users_panel_td[22] = TextDrawCreate(573.6859, 87.5998, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[22], 20.0000, 23.0000);
-	TextDrawColor(users_panel_td[22], 100);
-
-	users_panel_td[23] = TextDrawCreate(589.7821, 87.5998, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[23], 20.0000, 23.0000);
-	TextDrawColor(users_panel_td[23], 100);
-
-	users_panel_td[24] = TextDrawCreate(491.0328, 105.6470, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[24], 25.0000, 29.0000);
-	TextDrawColor(users_panel_td[24], 255);
-
-	users_panel_td[25] = TextDrawCreate(503.0000, 110.5998, "LD_SPAC:white"); // пусто
-	TextDrawTextSize(users_panel_td[25], 95.1912, 19.1399);
-	TextDrawColor(users_panel_td[25], 255);
-
-	users_panel_td[26] = TextDrawCreate(587.5159, 105.6470, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[26], 25.0000, 29.0000);
-	TextDrawColor(users_panel_td[26], 255);
-
-	users_panel_td[27] = TextDrawCreate(493.6332, 108.2470, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[27], 18.0000, 23.7800);
-	TextDrawColor(users_panel_td[27], -2139062017);
-
-	users_panel_td[28] = TextDrawCreate(503.0000, 112.1997, "LD_SPAC:white"); // пусто
-	TextDrawTextSize(users_panel_td[28], 97.5118, 15.9699);
-	TextDrawColor(users_panel_td[28], -2139062017);
-
-	users_panel_td[29] = TextDrawCreate(591.9146, 108.2470, "LD_BEAT:chit"); // пусто
-	TextDrawTextSize(users_panel_td[29], 18.0000, 23.7800);
-	TextDrawColor(users_panel_td[29], -2139062017);
-
-	users_panel_td[30] = TextDrawCreate(607.5949, 12.8000, "Reloot:_03:15"); // пусто
-	TextDrawLetterSize(users_panel_td[30], 0.1219, 0.6334);
-	TextDrawTextSize(users_panel_td[30], -7.0000, 0.0000);
-	TextDrawAlignment(users_panel_td[30], 3);
-	TextDrawColor(users_panel_td[30], -1);
-	TextDrawBackgroundColor(users_panel_td[30], 255);
-	TextDrawFont(users_panel_td[30], 1);
-	TextDrawSetProportional(users_panel_td[30], 1);
-	TextDrawSetShadow(users_panel_td[30], 0);
-	for(new td = 0; td < 31; td++)
-	{
-		switch(td)
-		{
-		case 8, 30: continue;
-		}
-		TextDrawAlignment(users_panel_td[td], 1);
-		TextDrawBackgroundColor(users_panel_td[td], 255);
-		TextDrawFont(users_panel_td[td], 4);
-		TextDrawSetProportional(users_panel_td[td], 0);
-		TextDrawSetShadow(users_panel_td[td], 0);
-	}*/
 	progressbar_TD[0] = TextDrawCreate(273.6998, 359.9184, "LD_SPAC:white"); // пусто
 	TextDrawTextSize(progressbar_TD[0], 88.0000, 16.7099);
 	TextDrawAlignment(progressbar_TD[0], 1);
@@ -1425,6 +1290,7 @@ stock CreateTextDraws()
 	TextDrawFont(progressbar_TD[1], 4);
 	TextDrawSetProportional(progressbar_TD[1], 0);
 	TextDrawSetShadow(progressbar_TD[1], 0);
+	
 	return true;
 }
 stock CreatePlayerTextDraws(playerid)
@@ -2085,7 +1951,12 @@ stock CreatePlayerTextDraws(playerid)
 	PlayerTextDrawFont(playerid, craft_pech_PTD[playerid][2], 2);
 	PlayerTextDrawSetProportional(playerid, craft_pech_PTD[playerid][2], 1);
 	PlayerTextDrawSetShadow(playerid, craft_pech_PTD[playerid][2], 0);
-	
+
+	return true;
+}
+
+stock CreateAllInventory ( playerid )
+{
 	inventory__TD[playerid][0] = CreatePlayerTextDraw(playerid, 453.000000, 125.000000, "mdl-8002:inv_bg_");
 	PlayerTextDrawFont(playerid, inventory__TD[playerid][0], 4);
 	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][0], 0.600000, 2.000000);
@@ -3016,98 +2887,1615 @@ stock CreatePlayerTextDraws(playerid)
 	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][59], -10.000000, 0.000000, -20.000000, 1.000000);
 	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][59], 1, 1);
 
-	/*
-	users_panel_ptd[playerid][0] = CreatePlayerTextDraw(playerid, 550.7993, 8.3000, "_"); // Miguel_Carter_(105)
-	PlayerTextDrawLetterSize(playerid, users_panel_ptd[playerid][0], 0.1634, 0.9279);
-	PlayerTextDrawAlignment(playerid, users_panel_ptd[playerid][0], 2);
-	PlayerTextDrawColor(playerid, users_panel_ptd[playerid][0], -1);
-	PlayerTextDrawBackgroundColor(playerid, users_panel_ptd[playerid][0], 255);
-	PlayerTextDrawFont(playerid, users_panel_ptd[playerid][0], 1);
-	PlayerTextDrawSetProportional(playerid, users_panel_ptd[playerid][0], 1);
-	PlayerTextDrawSetShadow(playerid, users_panel_ptd[playerid][0], 0);
+	inventory__TD[playerid][60] = CreatePlayerTextDraw(playerid, 468.000000, 130.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][60], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][60], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][60], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][60], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][60], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][60], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][60], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][60], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][60], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][60], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][60], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][60], 1);
 
-	users_panel_ptd[playerid][1] = CreatePlayerTextDraw(playerid, 604.6782, 20.0000, "99~n~12000~n~100~n~0~n~1000~n~36.6~n~12:22:05~n~1000000~n~10:45:03~n~"); // пусто
-	PlayerTextDrawLetterSize(playerid, users_panel_ptd[playerid][1], 0.1973, 0.8406);
-	PlayerTextDrawAlignment(playerid, users_panel_ptd[playerid][1], 3);
-	PlayerTextDrawColor(playerid, users_panel_ptd[playerid][1], -1);
-	PlayerTextDrawBackgroundColor(playerid, users_panel_ptd[playerid][1], 255);
-	PlayerTextDrawFont(playerid, users_panel_ptd[playerid][1], 1);
-	PlayerTextDrawSetProportional(playerid, users_panel_ptd[playerid][1], 1);
-	PlayerTextDrawSetShadow(playerid, users_panel_ptd[playerid][1], 0);
+	inventory__TD[playerid][61] = CreatePlayerTextDraw(playerid, 468.000000, 142.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][61], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][61], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][61], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][61], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][61], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][61], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][61], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][61], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][61], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][61], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][61], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][61], 1);
 
-	users_panel_ptd[playerid][2] = CreatePlayerTextDraw(playerid, 498.2001, 93.0000, "hud:radar_centre"); // пусто
-	PlayerTextDrawTextSize(playerid, users_panel_ptd[playerid][2], 10.0000, 12.0000);
-	PlayerTextDrawAlignment(playerid, users_panel_ptd[playerid][2], 1);
-	PlayerTextDrawColor(playerid, users_panel_ptd[playerid][2], -1);
-	PlayerTextDrawBackgroundColor(playerid, users_panel_ptd[playerid][2], 255);
-	PlayerTextDrawFont(playerid, users_panel_ptd[playerid][2], 4);
-	PlayerTextDrawSetProportional(playerid, users_panel_ptd[playerid][2], 0);
-	PlayerTextDrawSetShadow(playerid, users_panel_ptd[playerid][2], 0);
+	inventory__TD[playerid][62] = CreatePlayerTextDraw(playerid, 498.000000, 130.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][62], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][62], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][62], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][62], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][62], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][62], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][62], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][62], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][62], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][62], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][62], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][62], 1);
 
-	users_panel_ptd[playerid][3] = CreatePlayerTextDraw(playerid, 515.8001, 94.1997, "hud:radar_datedrink"); // пусто
-	PlayerTextDrawTextSize(playerid, users_panel_ptd[playerid][3], 7.3298, 10.0000);
-	PlayerTextDrawAlignment(playerid, users_panel_ptd[playerid][3], 1);
-	PlayerTextDrawColor(playerid, users_panel_ptd[playerid][3], -1);
-	PlayerTextDrawBackgroundColor(playerid, users_panel_ptd[playerid][3], 255);
-	PlayerTextDrawFont(playerid, users_panel_ptd[playerid][3], 4);
-	PlayerTextDrawSetProportional(playerid, users_panel_ptd[playerid][3], 0);
-	PlayerTextDrawSetShadow(playerid, users_panel_ptd[playerid][3], 0);
+	inventory__TD[playerid][63] = CreatePlayerTextDraw(playerid, 498.000000, 142.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][63], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][63], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][63], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][63], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][63], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][63], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][63], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][63], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][63], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][63], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][63], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][63], 1);
 
-	users_panel_ptd[playerid][4] = CreatePlayerTextDraw(playerid, 531.0963, 93.9000, "hud:radar_dateFood"); // пусто
-	PlayerTextDrawTextSize(playerid, users_panel_ptd[playerid][4], 8.3100, 10.5798);
-	PlayerTextDrawAlignment(playerid, users_panel_ptd[playerid][4], 1);
-	PlayerTextDrawColor(playerid, users_panel_ptd[playerid][4], -1);
-	PlayerTextDrawBackgroundColor(playerid, users_panel_ptd[playerid][4], 255);
-	PlayerTextDrawFont(playerid, users_panel_ptd[playerid][4], 4);
-	PlayerTextDrawSetProportional(playerid, users_panel_ptd[playerid][4], 0);
-	PlayerTextDrawSetShadow(playerid, users_panel_ptd[playerid][4], 0);
+	inventory__TD[playerid][64] = CreatePlayerTextDraw(playerid, 528.000000, 130.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][64], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][64], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][64], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][64], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][64], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][64], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][64], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][64], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][64], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][64], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][64], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][64], 1);
 
-	users_panel_ptd[playerid][5] = CreatePlayerTextDraw(playerid, 596.5805, 94.4999, "hud:radar_thetruth"); // пусто
-	PlayerTextDrawTextSize(playerid, users_panel_ptd[playerid][5], 7.1999, 9.6297);
-	PlayerTextDrawAlignment(playerid, users_panel_ptd[playerid][5], 1);
-	PlayerTextDrawColor(playerid, users_panel_ptd[playerid][5], -1);
-	PlayerTextDrawBackgroundColor(playerid, users_panel_ptd[playerid][5], 255);
-	PlayerTextDrawFont(playerid, users_panel_ptd[playerid][5], 4);
-	PlayerTextDrawSetProportional(playerid, users_panel_ptd[playerid][5], 0);
-	PlayerTextDrawSetShadow(playerid, users_panel_ptd[playerid][5], 0);
+	inventory__TD[playerid][65] = CreatePlayerTextDraw(playerid, 528.000000, 142.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][65], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][65], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][65], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][65], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][65], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][65], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][65], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][65], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][65], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][65], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][65], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][65], 1);
 
-	users_panel_ptd[playerid][6] = CreatePlayerTextDraw(playerid, 579.6845, 93.4000, "hud:radar_locosyndicate"); // пусто
-	PlayerTextDrawTextSize(playerid, users_panel_ptd[playerid][6], 8.1998, 11.5398);
-	PlayerTextDrawAlignment(playerid, users_panel_ptd[playerid][6], 1);
-	PlayerTextDrawColor(playerid, users_panel_ptd[playerid][6], -1);
-	PlayerTextDrawBackgroundColor(playerid, users_panel_ptd[playerid][6], 255);
-	PlayerTextDrawFont(playerid, users_panel_ptd[playerid][6], 4);
-	PlayerTextDrawSetProportional(playerid, users_panel_ptd[playerid][6], 0);
-	PlayerTextDrawSetShadow(playerid, users_panel_ptd[playerid][6], 0);
+	inventory__TD[playerid][66] = CreatePlayerTextDraw(playerid, 558.000000, 130.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][66], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][66], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][66], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][66], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][66], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][66], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][66], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][66], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][66], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][66], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][66], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][66], 1);
 
-	users_panel_ptd[playerid][7] = CreatePlayerTextDraw(playerid, 532.3001, 112.5998, "Gun:_Sniper_Rifle~n~Ammo:_550"); // пусто
-	PlayerTextDrawLetterSize(playerid, users_panel_ptd[playerid][7], 0.1613, 0.7796);
-	PlayerTextDrawAlignment(playerid, users_panel_ptd[playerid][7], 1);
-	PlayerTextDrawColor(playerid, users_panel_ptd[playerid][7], -1);
-	PlayerTextDrawBackgroundColor(playerid, users_panel_ptd[playerid][7], 255);
-	PlayerTextDrawFont(playerid, users_panel_ptd[playerid][7], 1);
-	PlayerTextDrawSetProportional(playerid, users_panel_ptd[playerid][7], 1);
-	PlayerTextDrawSetShadow(playerid, users_panel_ptd[playerid][7], 0);
+	inventory__TD[playerid][67] = CreatePlayerTextDraw(playerid, 558.000000, 142.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][67], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][67], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][67], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][67], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][67], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][67], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][67], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][67], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][67], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][67], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][67], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][67], 1);
 
-	users_panel_ptd[playerid][8] = CreatePlayerTextDraw(playerid, 546.6660, 94.4073, "hud:radar_zero"); // пусто
-	PlayerTextDrawTextSize(playerid, users_panel_ptd[playerid][8], 9.2700, 9.5298);
-	PlayerTextDrawAlignment(playerid, users_panel_ptd[playerid][8], 1);
-	PlayerTextDrawColor(playerid, users_panel_ptd[playerid][8], -1);
-	PlayerTextDrawBackgroundColor(playerid, users_panel_ptd[playerid][8], 255);
-	PlayerTextDrawFont(playerid, users_panel_ptd[playerid][8], 4);
-	PlayerTextDrawSetProportional(playerid, users_panel_ptd[playerid][8], 0);
-	PlayerTextDrawSetShadow(playerid, users_panel_ptd[playerid][8], 0);
+	inventory__TD[playerid][68] = CreatePlayerTextDraw(playerid, 588.000000, 130.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][68], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][68], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][68], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][68], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][68], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][68], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][68], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][68], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][68], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][68], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][68], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][68], 1);
+
+	inventory__TD[playerid][69] = CreatePlayerTextDraw(playerid, 588.000000, 142.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][69], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][69], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][69], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][69], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][69], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][69], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][69], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][69], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][69], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][69], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][69], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][69], 1);
+
+	inventory__TD[playerid][70] = CreatePlayerTextDraw(playerid, 468.000000, 160.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][70], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][70], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][70], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][70], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][70], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][70], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][70], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][70], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][70], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][70], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][70], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][70], 1);
+
+	inventory__TD[playerid][71] = CreatePlayerTextDraw(playerid, 468.000000, 172.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][71], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][71], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][71], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][71], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][71], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][71], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][71], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][71], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][71], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][71], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][71], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][71], 1);
+
+	inventory__TD[playerid][72] = CreatePlayerTextDraw(playerid, 498.000000, 160.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][72], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][72], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][72], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][72], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][72], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][72], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][72], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][72], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][72], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][72], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][72], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][72], 1);
+
+	inventory__TD[playerid][73] = CreatePlayerTextDraw(playerid, 498.000000, 172.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][73], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][73], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][73], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][73], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][73], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][73], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][73], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][73], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][73], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][73], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][73], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][73], 1);
+
+	inventory__TD[playerid][74] = CreatePlayerTextDraw(playerid, 528.000000, 160.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][74], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][74], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][74], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][74], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][74], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][74], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][74], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][74], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][74], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][74], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][74], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][74], 1);
+
+	inventory__TD[playerid][75] = CreatePlayerTextDraw(playerid, 528.000000, 172.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][75], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][75], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][75], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][75], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][75], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][75], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][75], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][75], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][75], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][75], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][75], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][75], 1);
+
+	inventory__TD[playerid][76] = CreatePlayerTextDraw(playerid, 558.000000, 160.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][76], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][76], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][76], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][76], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][76], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][76], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][76], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][76], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][76], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][76], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][76], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][76], 1);
+
+	inventory__TD[playerid][77] = CreatePlayerTextDraw(playerid, 558.000000, 172.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][77], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][77], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][77], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][77], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][77], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][77], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][77], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][77], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][77], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][77], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][77], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][77], 1);
+
+	inventory__TD[playerid][78] = CreatePlayerTextDraw(playerid, 588.000000, 160.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][78], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][78], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][78], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][78], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][78], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][78], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][78], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][78], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][78], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][78], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][78], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][78], 1);
+
+	inventory__TD[playerid][79] = CreatePlayerTextDraw(playerid, 588.000000, 172.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][79], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][79], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][79], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][79], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][79], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][79], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][79], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][79], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][79], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][79], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][79], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][79], 1);
+
+	inventory__TD[playerid][80] = CreatePlayerTextDraw(playerid, 468.000000, 190.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][80], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][80], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][80], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][80], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][80], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][80], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][80], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][80], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][80], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][80], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][80], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][80], 1);
+
+	inventory__TD[playerid][81] = CreatePlayerTextDraw(playerid, 468.000000, 202.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][81], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][81], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][81], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][81], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][81], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][81], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][81], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][81], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][81], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][81], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][81], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][81], 1);
+
+	inventory__TD[playerid][82] = CreatePlayerTextDraw(playerid, 498.000000, 190.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][82], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][82], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][82], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][82], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][82], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][82], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][82], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][82], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][82], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][82], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][82], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][82], 1);
+
+	inventory__TD[playerid][83] = CreatePlayerTextDraw(playerid, 498.000000, 202.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][83], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][83], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][83], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][83], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][83], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][83], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][83], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][83], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][83], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][83], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][83], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][83], 1);
+
+	inventory__TD[playerid][84] = CreatePlayerTextDraw(playerid, 528.000000, 190.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][84], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][84], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][84], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][84], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][84], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][84], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][84], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][84], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][84], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][84], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][84], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][84], 1);
+
+	inventory__TD[playerid][85] = CreatePlayerTextDraw(playerid, 528.000000, 202.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][85], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][85], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][85], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][85], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][85], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][85], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][85], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][85], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][85], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][85], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][85], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][85], 1);
+
+	inventory__TD[playerid][86] = CreatePlayerTextDraw(playerid, 558.000000, 190.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][86], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][86], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][86], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][86], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][86], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][86], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][86], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][86], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][86], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][86], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][86], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][86], 1);
+
+	inventory__TD[playerid][87] = CreatePlayerTextDraw(playerid, 558.000000, 202.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][87], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][87], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][87], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][87], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][87], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][87], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][87], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][87], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][87], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][87], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][87], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][87], 1);
+
+	inventory__TD[playerid][88] = CreatePlayerTextDraw(playerid, 588.000000, 190.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][88], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][88], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][88], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][88], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][88], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][88], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][88], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][88], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][88], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][88], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][88], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][88], 1);
+
+	inventory__TD[playerid][89] = CreatePlayerTextDraw(playerid, 588.000000, 202.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][89], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][89], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][89], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][89], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][89], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][89], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][89], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][89], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][89], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][89], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][89], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][89], 1);
+
+	inventory__TD[playerid][90] = CreatePlayerTextDraw(playerid, 468.000000, 220.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][90], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][90], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][90], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][90], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][90], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][90], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][90], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][90], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][90], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][90], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][90], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][90], 1);
+
+	inventory__TD[playerid][91] = CreatePlayerTextDraw(playerid, 468.000000, 232.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][91], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][91], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][91], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][91], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][91], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][91], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][91], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][91], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][91], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][91], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][91], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][91], 1);
+
+	inventory__TD[playerid][92] = CreatePlayerTextDraw(playerid, 498.000000, 220.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][92], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][92], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][92], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][92], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][92], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][92], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][92], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][92], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][92], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][92], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][92], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][92], 1);
+
+	inventory__TD[playerid][93] = CreatePlayerTextDraw(playerid, 498.000000, 232.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][93], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][93], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][93], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][93], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][93], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][93], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][93], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][93], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][93], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][93], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][93], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][93], 1);
+
+	inventory__TD[playerid][94] = CreatePlayerTextDraw(playerid, 528.000000, 220.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][94], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][94], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][94], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][94], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][94], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][94], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][94], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][94], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][94], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][94], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][94], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][94], 1);
+
+	inventory__TD[playerid][95] = CreatePlayerTextDraw(playerid, 528.000000, 232.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][95], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][95], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][95], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][95], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][95], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][95], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][95], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][95], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][95], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][95], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][95], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][95], 1);
+
+	inventory__TD[playerid][96] = CreatePlayerTextDraw(playerid, 558.000000, 220.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][96], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][96], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][96], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][96], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][96], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][96], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][96], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][96], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][96], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][96], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][96], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][96], 1);
+
+	inventory__TD[playerid][97] = CreatePlayerTextDraw(playerid, 558.000000, 232.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][97], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][97], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][97], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][97], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][97], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][97], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][97], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][97], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][97], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][97], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][97], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][97], 1);
+
+	inventory__TD[playerid][98] = CreatePlayerTextDraw(playerid, 588.000000, 220.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][98], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][98], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][98], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][98], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][98], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][98], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][98], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][98], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][98], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][98], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][98], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][98], 1);
+
+	inventory__TD[playerid][99] = CreatePlayerTextDraw(playerid, 588.000000, 232.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][99], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][99], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][99], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][99], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][99], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][99], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][99], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][99], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][99], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][99], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][99], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][99], 1);
+
+	inventory__TD[playerid][100] = CreatePlayerTextDraw(playerid, 468.000000, 250.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][100], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][100], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][100], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][100], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][100], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][100], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][100], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][100], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][100], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][100], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][100], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][100], 1);
+
+	inventory__TD[playerid][101] = CreatePlayerTextDraw(playerid, 468.000000, 262.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][101], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][101], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][101], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][101], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][101], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][101], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][101], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][101], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][101], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][101], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][101], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][101], 1);
+
+	inventory__TD[playerid][102] = CreatePlayerTextDraw(playerid, 498.000000, 250.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][102], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][102], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][102], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][102], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][102], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][102], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][102], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][102], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][102], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][102], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][102], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][102], 1);
+
+	inventory__TD[playerid][103] = CreatePlayerTextDraw(playerid, 498.000000, 262.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][103], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][103], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][103], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][103], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][103], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][103], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][103], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][103], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][103], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][103], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][103], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][103], 1);
+
+	inventory__TD[playerid][104] = CreatePlayerTextDraw(playerid, 528.000000, 250.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][104], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][104], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][104], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][104], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][104], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][104], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][104], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][104], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][104], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][104], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][104], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][104], 1);
+
+	inventory__TD[playerid][105] = CreatePlayerTextDraw(playerid, 528.000000, 262.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][105], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][105], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][105], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][105], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][105], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][105], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][105], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][105], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][105], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][105], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][105], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][105], 1);
+
+	inventory__TD[playerid][106] = CreatePlayerTextDraw(playerid, 558.000000, 250.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][106], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][106], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][106], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][106], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][106], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][106], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][106], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][106], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][106], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][106], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][106], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][106], 1);
+
+	inventory__TD[playerid][107] = CreatePlayerTextDraw(playerid, 558.000000, 262.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][107], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][107], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][107], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][107], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][107], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][107], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][107], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][107], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][107], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][107], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][107], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][107], 1);
+
+	inventory__TD[playerid][108] = CreatePlayerTextDraw(playerid, 588.000000, 250.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][108], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][108], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][108], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][108], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][108], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][108], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][108], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][108], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][108], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][108], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][108], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][108], 1);
+
+	inventory__TD[playerid][109] = CreatePlayerTextDraw(playerid, 588.000000, 262.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][109], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][109], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][109], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][109], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][109], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][109], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][109], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][109], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][109], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][109], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][109], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][109], 1);
+
+	inventory__TD[playerid][110] = CreatePlayerTextDraw(playerid, 468.000000, 280.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][110], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][110], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][110], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][110], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][110], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][110], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][110], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][110], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][110], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][110], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][110], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][110], 1);
+
+	inventory__TD[playerid][111] = CreatePlayerTextDraw(playerid, 468.000000, 292.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][111], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][111], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][111], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][111], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][111], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][111], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][111], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][111], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][111], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][111], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][111], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][111], 1);
+
+	inventory__TD[playerid][112] = CreatePlayerTextDraw(playerid, 498.000000, 280.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][112], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][112], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][112], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][112], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][112], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][112], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][112], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][112], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][112], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][112], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][112], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][112], 1);
+
+	inventory__TD[playerid][113] = CreatePlayerTextDraw(playerid, 498.000000, 292.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][113], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][113], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][113], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][113], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][113], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][113], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][113], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][113], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][113], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][113], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][113], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][113], 1);
+
+	inventory__TD[playerid][114] = CreatePlayerTextDraw(playerid, 528.000000, 280.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][114], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][114], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][114], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][114], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][114], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][114], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][114], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][114], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][114], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][114], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][114], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][114], 1);
+
+	inventory__TD[playerid][115] = CreatePlayerTextDraw(playerid, 528.000000, 292.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][115], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][115], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][115], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][115], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][115], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][115], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][115], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][115], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][115], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][115], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][115], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][115], 1);
+
+	inventory__TD[playerid][116] = CreatePlayerTextDraw(playerid, 558.000000, 280.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][116], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][116], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][116], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][116], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][116], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][116], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][116], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][116], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][116], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][116], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][116], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][116], 1);
+
+	inventory__TD[playerid][117] = CreatePlayerTextDraw(playerid, 558.000000, 292.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][117], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][117], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][117], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][117], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][117], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][117], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][117], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][117], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][117], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][117], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][117], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][117], 1);
+
+	inventory__TD[playerid][118] = CreatePlayerTextDraw(playerid, 588.000000, 280.000000, TranslateText( "Исп." ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][118], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][118], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][118], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][118], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][118], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][118], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][118], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][118], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][118], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][118], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][118], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][118], 1);
+
+	inventory__TD[playerid][119] = CreatePlayerTextDraw(playerid, 588.000000, 292.000000, TranslateText( "Выбросить" ) );
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][119], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][119], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][119], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][119], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][119], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][119], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][119], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][119], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][119], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][119], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][119], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][119], 1);
+
+	inventory__TD[playerid][120] = CreatePlayerTextDraw(playerid, 229.000000, 39.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][120], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][120], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][120], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][120], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][120], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][120], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][120], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][120], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][120], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][120], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][120], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][120], 1);
+
+	inventory__TD[playerid][121] = CreatePlayerTextDraw(playerid, 259.000000, 39.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][121], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][121], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][121], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][121], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][121], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][121], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][121], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][121], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][121], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][121], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][121], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][121], 1);
+
+	inventory__TD[playerid][122] = CreatePlayerTextDraw(playerid, 289.000000, 39.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][122], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][122], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][122], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][122], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][122], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][122], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][122], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][122], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][122], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][122], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][122], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][122], 1);
+
+	inventory__TD[playerid][123] = CreatePlayerTextDraw(playerid, 319.000000, 39.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][123], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][123], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][123], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][123], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][123], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][123], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][123], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][123], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][123], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][123], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][123], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][123], 1);
+
+	inventory__TD[playerid][124] = CreatePlayerTextDraw(playerid, 229.000000, 69.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][124], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][124], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][124], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][124], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][124], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][124], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][124], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][124], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][124], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][124], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][124], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][124], 1);
+
+	inventory__TD[playerid][125] = CreatePlayerTextDraw(playerid, 259.000000, 69.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][125], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][125], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][125], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][125], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][125], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][125], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][125], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][125], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][125], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][125], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][125], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][125], 1);
+
+	inventory__TD[playerid][126] = CreatePlayerTextDraw(playerid, 289.000000, 69.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][126], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][126], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][126], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][126], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][126], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][126], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][126], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][126], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][126], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][126], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][126], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][126], 1);
+
+	inventory__TD[playerid][127] = CreatePlayerTextDraw(playerid, 319.000000, 69.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][127], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][127], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][127], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][127], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][127], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][127], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][127], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][127], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][127], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][127], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][127], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][127], 1);
+
+	inventory__TD[playerid][128] = CreatePlayerTextDraw(playerid, 229.000000, 39.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][128], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][128], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][128], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][128], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][128], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][128], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][128], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][128], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][128], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][128], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][128], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][128], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][128], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][128], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][128], 1, 1);
+
+	inventory__TD[playerid][129] = CreatePlayerTextDraw(playerid, 259.000000, 39.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][129], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][129], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][129], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][129], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][129], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][129], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][129], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][129], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][129], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][129], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][129], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][129], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][129], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][129], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][129], 1, 1);
+
+	inventory__TD[playerid][130] = CreatePlayerTextDraw(playerid, 289.000000, 39.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][130], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][130], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][130], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][130], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][130], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][130], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][130], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][130], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][130], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][130], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][130], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][130], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][130], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][130], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][130], 1, 1);
+
+	inventory__TD[playerid][131] = CreatePlayerTextDraw(playerid, 319.000000, 39.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][131], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][131], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][131], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][131], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][131], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][131], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][131], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][131], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][131], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][131], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][131], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][131], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][131], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][131], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][131], 1, 1);
+
+	inventory__TD[playerid][132] = CreatePlayerTextDraw(playerid, 229.000000, 69.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][132], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][132], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][132], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][132], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][132], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][132], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][132], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][132], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][132], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][132], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][132], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][132], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][132], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][132], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][132], 1, 1);
+
+	inventory__TD[playerid][133] = CreatePlayerTextDraw(playerid, 259.000000, 69.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][133], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][133], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][133], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][133], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][133], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][133], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][133], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][133], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][133], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][133], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][133], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][133], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][133], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][133], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][133], 1, 1);
+
+	inventory__TD[playerid][134] = CreatePlayerTextDraw(playerid, 289.000000, 69.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][134], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][134], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][134], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][134], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][134], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][134], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][134], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][134], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][134], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][134], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][134], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][134], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][134], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][134], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][134], 1, 1);
+
+	inventory__TD[playerid][135] = CreatePlayerTextDraw(playerid, 319.000000, 69.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][135], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][135], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][135], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][135], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][135], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][135], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][135], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][135], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][135], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][135], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][135], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][135], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][135], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][135], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][135], 1, 1);
+
+	inventory__TD[playerid][136] = CreatePlayerTextDraw(playerid, 244.000000, 45.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][136], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][136], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][136], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][136], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][136], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][136], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][136], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][136], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][136], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][136], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][136], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][136], 1);
+
+	inventory__TD[playerid][137] = CreatePlayerTextDraw(playerid, 244.000000, 57.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][137], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][137], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][137], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][137], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][137], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][137], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][137], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][137], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][137], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][137], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][137], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][137], 1);
+
+	inventory__TD[playerid][138] = CreatePlayerTextDraw(playerid, 274.000000, 45.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][138], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][138], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][138], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][138], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][138], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][138], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][138], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][138], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][138], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][138], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][138], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][138], 1);
+
+	inventory__TD[playerid][139] = CreatePlayerTextDraw(playerid, 274.000000, 57.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][139], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][139], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][139], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][139], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][139], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][139], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][139], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][139], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][139], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][139], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][139], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][139], 1);
+
+	inventory__TD[playerid][140] = CreatePlayerTextDraw(playerid, 304.000000, 45.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][140], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][140], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][140], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][140], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][140], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][140], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][140], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][140], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][140], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][140], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][140], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][140], 1);
+
+	inventory__TD[playerid][141] = CreatePlayerTextDraw(playerid, 304.000000, 57.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][141], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][141], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][141], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][141], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][141], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][141], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][141], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][141], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][141], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][141], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][141], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][141], 1);
+
+	inventory__TD[playerid][142] = CreatePlayerTextDraw(playerid, 334.000000, 45.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][142], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][142], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][142], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][142], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][142], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][142], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][142], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][142], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][142], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][142], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][142], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][142], 1);
+
+	inventory__TD[playerid][143] = CreatePlayerTextDraw(playerid, 334.000000, 57.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][143], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][143], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][143], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][143], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][143], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][143], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][143], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][143], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][143], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][143], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][143], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][143], 1);
+
+	inventory__TD[playerid][144] = CreatePlayerTextDraw(playerid, 244.000000, 74.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][144], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][144], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][144], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][144], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][144], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][144], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][144], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][144], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][144], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][144], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][144], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][144], 1);
+
+	inventory__TD[playerid][145] = CreatePlayerTextDraw(playerid, 244.000000, 86.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][145], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][145], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][145], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][145], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][145], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][145], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][145], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][145], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][145], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][145], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][145], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][145], 1);
+
+	inventory__TD[playerid][146] = CreatePlayerTextDraw(playerid, 274.000000, 74.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][146], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][146], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][146], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][146], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][146], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][146], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][146], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][146], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][146], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][146], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][146], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][146], 1);
+
+	inventory__TD[playerid][147] = CreatePlayerTextDraw(playerid, 274.000000, 86.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][147], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][147], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][147], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][147], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][147], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][147], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][147], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][147], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][147], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][147], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][147], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][147], 1);
+
+	inventory__TD[playerid][148] = CreatePlayerTextDraw(playerid, 304.000000, 74.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][148], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][148], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][148], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][148], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][148], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][148], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][148], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][148], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][148], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][148], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][148], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][148], 1);
+
+	inventory__TD[playerid][149] = CreatePlayerTextDraw(playerid, 304.000000, 86.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][149], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][149], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][149], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][149], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][149], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][149], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][149], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][149], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][149], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][149], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][149], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][149], 1);
+
+	inventory__TD[playerid][150] = CreatePlayerTextDraw(playerid, 334.000000, 74.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][150], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][150], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][150], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][150], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][150], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][150], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][150], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][150], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][150], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][150], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][150], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][150], 1);
+
+	inventory__TD[playerid][151] = CreatePlayerTextDraw(playerid, 334.000000, 86.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][151], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][151], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][151], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][151], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][151], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][151], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][151], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][151], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][151], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][151], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][151], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][151], 1);
+
+	inventory__TD[playerid][152] = CreatePlayerTextDraw(playerid, 229.000000, 260.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][152], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][152], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][152], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][152], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][152], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][152], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][152], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][152], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][152], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][152], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][152], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][152], 1);
+
+	inventory__TD[playerid][153] = CreatePlayerTextDraw(playerid, 259.000000, 260.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][153], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][153], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][153], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][153], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][153], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][153], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][153], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][153], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][153], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][153], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][153], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][153], 1);
+
+	inventory__TD[playerid][154] = CreatePlayerTextDraw(playerid, 289.000000, 260.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][154], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][154], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][154], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][154], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][154], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][154], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][154], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][154], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][154], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][154], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][154], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][154], 1);
+
+	inventory__TD[playerid][155] = CreatePlayerTextDraw(playerid, 319.000000, 260.000000, "mdl-8002:inv_bg_");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][155], 4);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][155], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][155], 30.000000, 30.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][155], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][155], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][155], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][155], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][155], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][155], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][155], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][155], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][155], 1);
+
+	inventory__TD[playerid][156] = CreatePlayerTextDraw(playerid, 229.000000, 260.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][156], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][156], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][156], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][156], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][156], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][156], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][156], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][156], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][156], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][156], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][156], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][156], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][156], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][156], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][156], 1, 1);
+
+	inventory__TD[playerid][157] = CreatePlayerTextDraw(playerid, 259.000000, 260.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][157], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][157], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][157], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][157], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][157], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][157], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][157], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][157], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][157], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][157], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][157], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][157], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][157], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][157], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][157], 1, 1);
+
+	inventory__TD[playerid][158] = CreatePlayerTextDraw(playerid, 289.000000, 260.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][158], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][158], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][158], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][158], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][158], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][158], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][158], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][158], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][158], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][158], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][158], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][158], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][158], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][158], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][158], 1, 1);
+
+	inventory__TD[playerid][159] = CreatePlayerTextDraw(playerid, 319.000000, 260.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][159], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][159], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][159], 29.000000, 29.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][159], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][159], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][159], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][159], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][159], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][159], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][159], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][159], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][159], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][159], 0);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][159], -10.000000, 0.000000, -20.000000, 1.000000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][159], 1, 1);
+
+	inventory__TD[playerid][160] = CreatePlayerTextDraw(playerid, 244.000000, 265.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][160], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][160], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][160], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][160], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][160], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][160], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][160], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][160], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][160], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][160], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][160], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][160], 1);
+
+	inventory__TD[playerid][161] = CreatePlayerTextDraw(playerid, 244.000000, 277.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][161], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][161], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][161], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][161], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][161], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][161], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][161], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][161], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][161], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][161], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][161], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][161], 1);
+
+	inventory__TD[playerid][162] = CreatePlayerTextDraw(playerid, 274.000000, 265.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][162], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][162], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][162], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][162], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][162], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][162], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][162], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][162], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][162], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][162], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][162], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][162], 1);
+
+	inventory__TD[playerid][163] = CreatePlayerTextDraw(playerid, 274.000000, 277.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][163], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][163], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][163], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][163], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][163], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][163], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][163], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][163], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][163], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][163], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][163], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][163], 1);
+
+	inventory__TD[playerid][164] = CreatePlayerTextDraw(playerid, 304.000000, 265.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][164], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][164], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][164], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][164], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][164], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][164], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][164], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][164], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][164], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][164], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][164], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][164], 1);
+
+	inventory__TD[playerid][165] = CreatePlayerTextDraw(playerid, 304.000000, 277.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][165], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][165], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][165], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][165], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][165], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][165], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][165], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][165], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][165], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][165], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][165], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][165], 1);
+
+	inventory__TD[playerid][166] = CreatePlayerTextDraw(playerid, 334.000000, 265.000000, TranslateText( "Исп." ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][166], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][166], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][166], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][166], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][166], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][166], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][166], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][166], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][166], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][166], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][166], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][166], 1);
+
+	inventory__TD[playerid][167] = CreatePlayerTextDraw(playerid, 334.000000, 277.000000, TranslateText( "Выбросить" ));
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][167], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][167], 0.137500, 0.800000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][167], 6.500000, 24.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][167], 0);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][167], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][167], 2);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][167], -764862721);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][167], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][167], -1962934017);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][167], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][167], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][167], 1);
 	
-	progressbar_PTD[playerid][0] = CreatePlayerTextDraw(playerid, 274.5998, 360.6184, "LD_SPAC:white"); // пусто
-	PlayerTextDrawTextSize(playerid, progressbar_PTD[playerid][0], 0.0, 15.0598); // 86.4996
-	PlayerTextDrawAlignment(playerid, progressbar_PTD[playerid][0], 1);
-	PlayerTextDrawColor(playerid, progressbar_PTD[playerid][0], -2139062017);
-	PlayerTextDrawBackgroundColor(playerid, progressbar_PTD[playerid][0], 255);
-	PlayerTextDrawFont(playerid, progressbar_PTD[playerid][0], 4);
-	PlayerTextDrawSetProportional(playerid, progressbar_PTD[playerid][0], 0);
-	PlayerTextDrawSetShadow(playerid, progressbar_PTD[playerid][0], 0);*/
-	return true;
+	inventory__TD[playerid][168] = CreatePlayerTextDraw(playerid, 238.000000, 99.000000, "TextDraw");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][168], 5);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][168], 0.600000, 2.000000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][168], 84.000000, 54.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][168], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][168], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][168], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][168], 255);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][168], 0);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][168], 12);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][168], 1);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][168], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][168], 1);
+	PlayerTextDrawSetPreviewModel(playerid, inventory__TD[playerid][168], 355);
+	PlayerTextDrawSetPreviewRot(playerid, inventory__TD[playerid][168], -10.000000, 0.000000, -20.000000, 1.900000);
+	PlayerTextDrawSetPreviewVehCol(playerid, inventory__TD[playerid][168], 1, 1);
+
+	inventory__TD[playerid][169] = CreatePlayerTextDraw(playerid, 307.000000, 118.000000, "50/1000");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][169], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][169], 0.350000, 1.500000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][169], 400.000000, 17.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][169], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][169], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][169], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][169], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][169], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][169], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][169], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][169], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][169], 0);
+
+	inventory__TD[playerid][170] = CreatePlayerTextDraw(playerid, 230.000000, 134.000000, "ak-47 (7,62x19)");
+	PlayerTextDrawFont(playerid, inventory__TD[playerid][170], 1);
+	PlayerTextDrawLetterSize(playerid, inventory__TD[playerid][170], 0.487500, 1.400000);
+	PlayerTextDrawTextSize(playerid, inventory__TD[playerid][170], 400.000000, 17.000000);
+	PlayerTextDrawSetOutline(playerid, inventory__TD[playerid][170], 1);
+	PlayerTextDrawSetShadow(playerid, inventory__TD[playerid][170], 0);
+	PlayerTextDrawAlignment(playerid, inventory__TD[playerid][170], 1);
+	PlayerTextDrawColor(playerid, inventory__TD[playerid][170], -1);
+	PlayerTextDrawBackgroundColor(playerid, inventory__TD[playerid][170], 255);
+	PlayerTextDrawBoxColor(playerid, inventory__TD[playerid][170], 50);
+	PlayerTextDrawUseBox(playerid, inventory__TD[playerid][170], 0);
+	PlayerTextDrawSetProportional(playerid, inventory__TD[playerid][170], 1);
+	PlayerTextDrawSetSelectable(playerid, inventory__TD[playerid][170], 0);
+	return 1;
 }
+
+stock DestroyAllInventory ( playerid )
+{
+	for(new td = 0; td < MAX_INV_TD; td++)  PlayerTextDrawDestroy(playerid, PlayerText: inventory__TD[playerid][td]);
+	return 1;
+}
+
+stock UpdateTD ( playerid, PlayerText:td )
+{
+	PlayerTextDrawHide ( playerid, td );
+	PlayerTextDrawShow ( playerid, td );
+
+	return 1;
+}
+
 /*
 
 	OnPlayerConnect;
