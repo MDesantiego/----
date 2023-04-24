@@ -58,7 +58,10 @@ const MAX_LOOT = 15000; // Всего лута на сервере;
 
 
 #define SEM(%0,%1) \
-	SendClientMessageEx(%0, 0xFF6347AA, "-> "%1)
+	SendClientMessageEx(%0, color_error, "Сервер: {FFFFFF}"%1)
+
+#define SSU(%0,%1) \
+	SendClientMessageEx(%0, color_accept, "Сервер: {FFFFFF}"%1)
 
 #define SSM(%0,%1) \
 	SendClientMessageEx(%0, 0xFFFF90FF, "-> "%1)
@@ -71,6 +74,7 @@ const MAX_LOOT = 15000; // Всего лута на сервере;
 
 #define NoCommand(%0) \
 	SEM ( %0, "{FFFFFF}Данная команда не существует. Используйте {cccccc}/cmd{ffffff}, чтобы узнать список команд сервера." )
+
 /*
 #if defined _ALS_TextDrawShowForPlayer
         #undef TextDrawShowForPlayer
@@ -87,9 +91,10 @@ const MAX_LOOT = 15000; // Всего лута на сервере;
 #define PlayerTextDrawShow _PlayerTextDrawShow
 
 
-stock _TextDrawShowForPlayer ( playerid, Text:textid ) return SEM ( playerid, "net" );
-stock _PlayerTextDrawShow ( playerid, PlayerText: textid ) return SEM ( playerid, "Da" );
+stock _TextDrawShowForPlayer ( playerid, Text:textid ) return SEM ( playerid, "[GLOBAL]%s", Text:textid );
+stock _PlayerTextDrawShow ( playerid, PlayerText: textid ) return SEM ( playerid, "[PLAYER]%s", PlayerText: textid );
 */
+
 #include 									"modules/core/variables.pwn"
 #include 									"modules/core/mysql_connect.pwn"
 #include 									"modules/core/anticheat.pwn"
@@ -112,7 +117,7 @@ new const WeaponNames[][32] = {
 	{"Unarmed (Fist)"},{"Brass Knuckles"},{"Golf Club"},{"Night Stick"},{"Knife"},{"Baseball Bat"},{"Shovel"},{"Pool Cue"}, {"Katana"},
 	{"Chainsaw"},{"Purple Dildo"},{"Big White Vibrator"},{"Medium White Vibrator"},{"Small White Vibrator"},{"Flowers"},{"Cane"},
 	{"Grenade"},{"Teargas"},{"Molotov"},{" "},{" "},{" "},{"9mm"},{"Silenced 9mm"},{"Desert Eagle"},{"Shotgun"},{"Sawnoff Shotgun"},
-	{"Combat Shotgun"},{"Micro Uzi"},{"MP5"},{"AK47"},{"M4"},{"Tec9"},{"Country Rifle"},{"Sniper Rifle"},{"RPG"},
+	{"Combat Shotgun"},{"Micro Uzi"},{"MP5"},{"AK-47"},{"M4"},{"Tec9"},{"Country Rifle"},{"Sniper Rifle"},{"RPG"},
 	{"Heat-Seeking Rocket Launcher"},{"Flamethrower"},{"Minigun"},{"Satchel Charge"},{"Detonator"},{"Spray Can"},{"Fire Extinguisher"},
 	{"Camera"},{"Night Vision"},{"Infrared Vision"},{"Parachute"},{"Fake Pistol"},{" "},{"Vehicle"},{"Helicopter Blades"},
 	{"Explosion"},{" "},{"Drowned"},{"Splat"}};
@@ -144,6 +149,8 @@ new
 #include 									"modules/core/loots/box.pwn"
 #include 									"modules/core/Registration-Login.pwn"
 #include 									"modules/core/system_report.pwn"
+
+#include 									"modules/core/m_inventory.pwn"
 //=============================[ Stock's ]======================================
 stock TranslateText(string[])
 {
@@ -1648,7 +1655,7 @@ public OnPlayerText(playerid, text[])
 	AddChatLogs(playerid, text);
 	return 0; 
 }
-stock UseItem(playerid, itemid, quantity = 0) 
+stock UseItem(playerid, itemid, quantity = 0, slot = -1) 
 {
 	switch(itemid)
 	{
@@ -1764,7 +1771,8 @@ stock UseItem(playerid, itemid, quantity = 0)
 		}
 	case 10..17, 59..62, 71..72:
 		{
-			switch(itemid)
+			ActivateGun ( playerid, slot );			
+			/*switch(itemid)
 			{
 			case 11, 59..60: if(GetPlayerWeaponSlot(playerid, 2)) return server_error(playerid, "Слот оружия уже испльзуется другим оружием.");
 			case 10, 61, 72: if(GetPlayerWeaponSlot(playerid, 3)) return server_error(playerid, "Слот оружия уже испльзуется другим оружием.");
@@ -1793,6 +1801,7 @@ stock UseItem(playerid, itemid, quantity = 0)
 				break;
 			} 
 			if(!check) return SCMASS(playerid, "У вас нет патронов для %s.", WeaponNames[GetItemWeapon(itemid)]);
+			*/
 		}
 	case 26:
 		{
@@ -2461,6 +2470,8 @@ stock UseItem(playerid, itemid, quantity = 0)
 	if(itemid == 107) { }
 	return 1; 
 }
+
+//106
 public OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, Float:fZ)
 {
 	switch(weaponid)

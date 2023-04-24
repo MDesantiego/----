@@ -90,6 +90,8 @@ stock ResetNew(playerid)
 
 	users [ playerid ] [ u_stamina ] = 100.0;
 
+	temp [ playerid ] [ t_inv_new_slot ] =
+	temp [ playerid ] [ inventory_open ] = false;
 
 	admin[playerid][admin_level] 							= 0;
 	admin[playerid][u_a_dostup] 						= 0;
@@ -198,24 +200,17 @@ stock LoadingForUser(playerid, value = 0)
 	{
 	case 0:
 		{
-			for(new i = 0; i != 3; i++) TextDrawHideForPlayer(playerid, LoadingPlayer_TD[i]);
-			TextDrawHideForPlayer(playerid, Text: drop_items_TD);
+			//for(new i = 0; i != 3; i++) TextDrawHideForPlayer(playerid, LoadingPlayer_TD[i]);
+			//TextDrawHideForPlayer(playerid, Text: drop_items_TD);
 			// temp[playerid][protect_loading] = 1;
 			if(GPS_Zone[playerid][0])
 			{
 				GPS_Zone[playerid][0] = 0;
-				PlayerTextDrawSetString(playerid, GPS_PTD[playerid][0], "_");
-				for(new i = 0; i != 6; i++) TextDrawHideForPlayer(playerid, Text: GPS_TD[i]);
-				PlayerTextDrawHide(playerid, PlayerText: GPS_PTD[playerid][0]);
+				//PlayerTextDrawSetString(playerid, GPS_PTD[playerid][0], "_");
+				//for(new i = 0; i != 6; i++) TextDrawHideForPlayer(playerid, Text: GPS_TD[i]);
+				//PlayerTextDrawHide(playerid, PlayerText: GPS_PTD[playerid][0]);
 			}
-			/*for(new td = 0; td < 31; td++)
-			{
-				switch(td)
-				{
-				case 24..29: continue;
-				default: TextDrawShowForPlayer(playerid, users_panel_td[td]);
-				}
-			}
+			/*
 			for(new ptd = 0; ptd < 9; ptd++)
 			{
 				if(ptd == 7) continue;
@@ -229,14 +224,13 @@ stock LoadingForUser(playerid, value = 0)
 	case 1:
 		{
 			if(GetPVarInt(playerid, "PROTECT_LOADING")) return true;
-			TextDrawHideForPlayer(playerid, Text: drop_items_TD);
-			TextDrawSetString(LoadingPlayer_TD[1], "Loading....");
-			for(new i = 0; i != 2; i++) TextDrawShowForPlayer(playerid, LoadingPlayer_TD[i]);
-			TextDrawHideForPlayer(playerid, Text: drop_items_TD);
+			//TextDrawHideForPlayer(playerid, Text: drop_items_TD);
+			//TextDrawSetString(LoadingPlayer_TD[1], "Loading....");
+			//for(new i = 0; i != 2; i++) TextDrawShowForPlayer(playerid, LoadingPlayer_TD[i]);
+			//TextDrawHideForPlayer(playerid, Text: drop_items_TD);
 			// temp[playerid][protect_loading] = 0;
 			SetPVarInt(playerid, "PROTECT_LOADING", 1);
-			for(new td = 0; td < 31; td++) TextDrawHideForPlayer(playerid, users_panel_td[td]);
-			for(new ptd = 0; ptd < 9; ptd++) PlayerTextDrawHide(playerid, PlayerText: users_panel_ptd[playerid][ptd]);
+			//for(new ptd = 0; ptd < 9; ptd++) PlayerTextDrawHide(playerid, PlayerText: users_panel_ptd[playerid][ptd]);
 		}
 	}
 	return true;
@@ -1683,43 +1677,43 @@ stock update_users_panel(playerid)
 		default: format(format_update_users_panel, sizeof(format_update_users_panel), "%i~n~%.0f~n~%i~n~%i~n~%0.1f~n~%02d:%02d:%02d~n~%i~n~%s~n~", floatround(users[playerid][u_health]*120), users[playerid][u_armour], users[playerid][u_score], users[playerid][u_humanity], users[playerid][u_temperature], global_hour, global_minute, global_second, users[playerid][u_money], convert_time(users[playerid][u_lifegame]));
 		}
 	}
-	PlayerTextDrawSetString(playerid, users_panel_ptd[playerid][1], format_update_users_panel);
+	//PlayerTextDrawSetString(playerid, users_panel_ptd[playerid][1], format_update_users_panel);
 	switch(users[playerid][u_hunger])
 	{
 		case 0..30:
 		{
-			if(GetPVarInt(playerid, "PROTECT_HUNGER") != 1)
+			/*if(GetPVarInt(playerid, "PROTECT_HUNGER") != 1)
 			{
 				PlayerTextDrawHide(playerid, PlayerText: users_panel_ptd[playerid][4]);
 				PlayerTextDrawColor(playerid, users_panel_ptd[playerid][4], HUD_HARD);
 				PlayerTextDrawShow(playerid, PlayerText: users_panel_ptd[playerid][4]);
 				SetPVarInt(playerid, "PROTECT_HUNGER", 1);
-			}
+			}*/
 		}
 		case 31..70:
 		{
-			if(GetPVarInt(playerid, "PROTECT_HUNGER") != 2)
+			/*if(GetPVarInt(playerid, "PROTECT_HUNGER") != 2)
 			{
 				PlayerTextDrawHide(playerid, PlayerText: users_panel_ptd[playerid][4]);
 				PlayerTextDrawColor(playerid, users_panel_ptd[playerid][4], HUD_MEDIUM);
 				PlayerTextDrawShow(playerid, PlayerText: users_panel_ptd[playerid][4]);
 				SetPVarInt(playerid, "PROTECT_HUNGER", 2);
-			}
+			}*/
 		}
 		case 71..100:
 		{
-			if(GetPVarInt(playerid, "PROTECT_HUNGER") != 3)
+			/*if(GetPVarInt(playerid, "PROTECT_HUNGER") != 3)
 			{
 				PlayerTextDrawHide(playerid, PlayerText: users_panel_ptd[playerid][4]);
 				PlayerTextDrawColor(playerid, users_panel_ptd[playerid][4], HUD_NORMAL);
 				PlayerTextDrawShow(playerid, PlayerText: users_panel_ptd[playerid][4]);
 				SetPVarInt(playerid, "PROTECT_HUNGER", 3);
-			}
+			}*/
 		}
 	}
 	switch(users[playerid][u_thirst])
 	{
-		case 0..30:
+		/*case 0..30:
 		{
 			if(GetPVarInt(playerid, "PROTECT_THIRST") != 1)
 			{
@@ -1834,6 +1828,8 @@ stock update_users_panel(playerid)
 		PlayerTextDrawHide(playerid, PlayerText: users_panel_ptd[playerid][6]);
 		PlayerTextDrawColor(playerid, users_panel_ptd[playerid][6], HUD_NORMAL);
 		PlayerTextDrawShow(playerid, PlayerText: users_panel_ptd[playerid][6]);
+	}*/
+		default: return 1;
 	}
 	/*if(GetPlayerWeapon(playerid) != 0)
 	{
@@ -1841,7 +1837,6 @@ stock update_users_panel(playerid)
 		if(!GetPVarInt(playerid, "SHOW_GUN_INFO"))
 		{
 			SetPVarInt(playerid, "SHOW_GUN_INFO", 1);
-			for(new td = 24; td < 30; td++) TextDrawShowForPlayer(playerid, users_panel_td[td]);
 			PlayerTextDrawShow(playerid, PlayerText: users_panel_ptd[playerid][7]);
 		}
 		format(format_update_users_panel, sizeof(format_update_users_panel), "Gun:_%s~n~Ammo:_%i", WeaponNames[GetPlayerWeapon(playerid)], GetPlayerAmmo(playerid));
@@ -1851,11 +1846,8 @@ stock update_users_panel(playerid)
 	{
 		DeletePVar(playerid, "GUN_ID");
 		DeletePVar(playerid, "SHOW_GUN_INFO");
-		for(new td = 24; td < 30; td++) TextDrawHideForPlayer(playerid, users_panel_td[td]);
 		PlayerTextDrawHide(playerid, PlayerText: users_panel_ptd[playerid][7]);
 	}*/
-	format(format_update_users_panel, sizeof(format_update_users_panel), "Reloot:_%02i:%02i", ReLootTime/60, ReLootTime-((ReLootTime/60)*60));
-	TextDrawSetString(users_panel_td[30], format_update_users_panel); 
 	if(observation[playerid][observation_id] != INVALID_PLAYER_ID)
 	{
 		format(format_update_users_panel, sizeof(format_update_users_panel), "%s_(%i)", users[observation[playerid][observation_id]][u_name], observation[playerid][observation_id]);

@@ -10,7 +10,7 @@ new const bool: test_server = false;
 // #undef HOST_NAME
 // #define HOST_NAME							"IP: 81.176.176.17:7777"
 #define LANG_NAME   						"RU/UA"
-#define VKON_NAME   						"vk.com/defiantblood"
+#define VKON_NAME   						"vk.com/warproj"
 #define SITE_NAME   						"defiant-blood.com"
 #define FORU_NAME   						"forum."SITE_NAME""
 #define RCON_NAME   						"qQOKY1oJD2TbXLmz"
@@ -120,6 +120,10 @@ enum templ {
 
 	tSelect,
 	tSelect_1,
+
+	bool:t_inv_new_slot,
+	t_inv_old_slot_id,
+	bool:inventory_open,
 };
 new temp[MAX_PLAYERS][templ];
 

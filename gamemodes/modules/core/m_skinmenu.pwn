@@ -135,7 +135,7 @@ Dialog:SKIN_EDIT_0 ( params_dialog )
     strcat ( SkinMenu [ id ] [ eName ], inputtext );
     
     new query [ 128 ];
-    m_format ( query, sizeof query, "UPDATE "TABLE_SKIN" SET eName=%s WHERE id = %i",
+    m_format ( query, sizeof query, "UPDATE "TABLE_SKIN" SET `eName`='%s' WHERE id='%i'",
         inputtext,
         SkinMenu [ id ] [ eID ]
     );
@@ -276,12 +276,33 @@ MSelectCreate:skin_list(playerid)
 	MSelect_Open(playerid, MSelect:skin_list, items_array, items_count, .button = TranslateText ( "Закрыть"), .header = TranslateText("Список скинов"));
 }
 
+stock GetSkinIdByModel ( modelid )
+{
+    for ( new i = 0 ; i < MAX_SKIN; i ++ )
+    {
+        if ( SkinMenu [ i ] [ eSkinID ] != modelid )
+            continue;
+
+        return i;
+    }
+
+    return 0;
+}
+
 MSelectResponse:skin_list(playerid, MSelectType:response, itemid, modelid)
 {
-	new string[144];
-	format(string, sizeof(string), "ID: %d | Type: %d | Item: %d | Model: %d",
-	       playerid, _:response, itemid, modelid);
-	SendClientMessage(playerid, -1, string);
+	new id = GetSkinIdByModel ( modelid ),
+        str_ [ 250 ];
+
+    format ( str_, sizeof str_, "\
+        \n {FFFFFF}Название: {87CEEB}%s (#%i)\n \n \
+        {FFFFFF}Защита от урона: {87CEEB}%i (процентов) \n \
+    ",
+        SkinMenu [ id ] [ eName ], SkinMenu [ id ] [ eID ],
+        SkinMenu [ id ] [ eSkinProtect ]  
+    );
+
+    Dialog_Show ( playerid, null, DIALOG_STYLE_MSGBOX, " ", str_, "Закрыть", "" );
 	return 1;
 }
 

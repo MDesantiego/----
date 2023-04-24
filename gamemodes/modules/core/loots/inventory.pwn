@@ -471,6 +471,8 @@ stock AddItem(playerid, item, value_one, value_two = 0)
 					user_items[playerid][id_inv][item_id] = item;
 					user_items[playerid][id_inv][item_value] = value_one;
 					user_items[playerid][id_inv][item_quantity] = value_two;
+					SSM ( playerid, "ShowPlayerNewSlot" );
+					ShowPlayerNewSlot ( playerid, id_inv );
 					break;
 				}
 			}
@@ -1038,6 +1040,8 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 
 	Снятие предметов;
 	()
+
+	
 
 */
 CMD:drop(playerid)
